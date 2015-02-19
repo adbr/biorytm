@@ -2,7 +2,10 @@
 
 package main
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestJulianDayNumber(t *testing.T) {
 	tests := []struct {
@@ -31,6 +34,44 @@ func TestJulianDayNumber(t *testing.T) {
 		jd := julianDayNumber(test.y, test.m, test.d)
 		if jd != test.jd {
 			t.Errorf("#%d: julianDayNumber(): oczekiwano: %d, jest: %d", i, test.jd, jd)
+		}
+	}
+}
+
+func TestNdays(t *testing.T) {
+	//layout := "2006-01-02"
+
+	tests := []struct {
+		t1 time.Time
+		t2 time.Time
+		n  int64 // liczba dni między t1 i t2
+	}{
+		{
+			time.Now(),
+			time.Now(),
+			0,
+		},
+		{
+			t1: time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+			t2: time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+			n:  0,
+		},
+		{
+			t1: time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+			t2: time.Date(2015, 1, 2, 0, 0, 0, 0, time.UTC),
+			n:  1,
+		},
+		{
+			t1: time.Date(2015, 1, 5, 0, 0, 0, 0, time.UTC),
+			t2: time.Date(2015, 1, 1, 0, 0, 0, 0, time.UTC),
+			n:  4,
+		},
+	}
+
+	for i, test := range tests {
+		n := ndays(test.t1, test.t2)
+		if n != test.n {
+			t.Errorf("#%d: ndays(): oczekiwano: %d, jest: %d", i, test.n, n)
 		}
 	}
 }
