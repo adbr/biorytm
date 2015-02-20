@@ -16,15 +16,15 @@ const (
 	iPeriod = 33
 )
 
-const (
-	dateFmt = "2006-01-02"
-)
+const dateFmt = "2006-01-02"
 
-const usageStr = `usage: biorytm data_urodzenia [data_biorytmu]
-	argumenty data_urodzenia i data_biorytmu mają format 'yyyy-mm-dd'`
+const usageStr = `usage: biorytm [flagi] data_urodzenia [data_biorytmu]
+	data w formacie 'yyyy-mm-dd'
+	flagi:
+		-range=15: zakres dni biorytmu`
 
 var (
-	rangeFlag = flag.Int("range", 15, "zakres dni")
+	rangeFlag = flag.Int("range", 15, "zakres dni biorytmu")
 )
 
 func usage() {
@@ -56,9 +56,9 @@ func ndays(t1, t2 time.Time) int64 {
 // bioDay zwraca numer cyklu fizycznego, psychicznego i intelektualnego
 // dla dnia n od urodzenia.
 func bioDay(n int64) (f, p, i int) {
-	f = int(n % fPeriod)
-	p = int(n % pPeriod)
-	i = int(n % iPeriod)
+	f = int(n % fPeriod) + 1
+	p = int(n % pPeriod) + 1
+	i = int(n % iPeriod) + 1
 	return
 }
 
@@ -83,27 +83,43 @@ func biorytm(btime, dtime time.Time) {
 	d := dtime.Add(-time.Duration(r) * day) // data początku zakresu
 	n := ndays(btime, d)     // liczba dni od urodzenia do początku zakresu
 
+	dmark := " "
+	fmark := " "
+	pmark := " "
+	imark := " "
+
 	for i := 0; i < *rangeFlag; i++ {
 		f, p, i := bioDay(n)
 		fv, pv, iv := bioVal(n)
 
-		fmt.Printf("%s", d.Format(dateFmt))
-		fmt.Printf(" F: %+5.2f (%2d/%d)", fv, f, fPeriod)
-		fmt.Printf(" P: %+5.2f (%2d/%d)", pv, p, pPeriod)
-		fmt.Printf(" I: %+5.2f (%2d/%d)\n", iv, i, iPeriod)
+		if d == dtime { dmark = "*" }
+
+		fmt.Printf("%s%s ", d.Format(dateFmt), dmark)
+		fmt.Printf(" F: %+5.2f (%2d/%d)%s ", fv, f, fPeriod, fmark)
+		fmt.Printf(" P: %+5.2f (%2d/%d)%s ", pv, p, pPeriod, pmark)
+		fmt.Printf(" I: %+5.2f (%2d/%d)%s \n", iv, i, iPeriod, imark)
 
 		d = d.Add(day)
 		n++
+		dmark = " "
+		fmark = " "
+		pmark = " "
+		imark = " "
 	}
+	_ = fmark
+	_ = pmark
+	_ = imark
 }
 
 func main() {
 	flag.Usage = usage
 	flag.Parse()
 
-	var btime time.Time // data urodzenia
-	var dtime time.Time // data docelowa biorytmu
-	var err error
+	var (
+		btime time.Time // data urodzenia
+		dtime time.Time // data docelowa biorytmu
+		err   error
+	)
 
 	switch flag.NArg() {
 	case 1:
