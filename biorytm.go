@@ -16,6 +16,13 @@ const (
 	iPeriod = 33
 )
 
+const (
+	zeroMark  = "Z" // zaznacza dzień zerowy biorytmu
+	maxMark   = "M" // zaznacza dzień maksymalny lub minimalny
+	dateMark  = "*" // aktualna data
+	emptyMark = " " // dla zwykłego dnia
+)
+
 const dateFmt = "2006-01-02"
 
 const usageStr = `usage: biorytm [flagi] data_urodzenia [data_biorytmu]
@@ -56,9 +63,9 @@ func ndays(t1, t2 time.Time) int64 {
 // bioDay zwraca numer cyklu fizycznego, psychicznego i intelektualnego
 // dla dnia n od urodzenia.
 func bioDay(n int64) (f, p, i int) {
-	f = int(n % fPeriod) + 1
-	p = int(n % pPeriod) + 1
-	i = int(n % iPeriod) + 1
+	f = int(n%fPeriod) + 1
+	p = int(n%pPeriod) + 1
+	i = int(n%iPeriod) + 1
 	return
 }
 
@@ -72,6 +79,40 @@ func bioVal(n int64) (fv, pv, iv float64) {
 	return
 }
 
+// marks zwraca znaczniki jeśli dzień biorytmu jest wyróżniony, czyli
+// jeśli jest dniem zerowym, lub dniem maksymum lub minimum biorytmu.
+func marks(f, p, i int) (fmark, pmark, imark string) {
+	switch f {
+	case 23, 11, 12:
+		fmark = zeroMark
+	case 6, 17:
+		fmark = maxMark
+	default:
+		fmark = emptyMark
+	}
+
+	switch p {
+	case 28, 14:
+		pmark = zeroMark
+	case 7, 21:
+		pmark = maxMark
+	default:
+		pmark = emptyMark
+	}
+
+	switch i {
+	case 33, 16, 17:
+		imark = zeroMark
+	case 8, 25:
+		imark = maxMark
+	default:
+		imark = emptyMark
+	}
+
+	return
+}
+
+// biorytm drukuje na stdout biorytm.
 func biorytm(btime, dtime time.Time) {
 	fmt.Printf("data urodzenia: %s\n", btime.Format(dateFmt))
 	fmt.Printf("data docelowa:  %s\n", dtime.Format(dateFmt))
@@ -81,18 +122,17 @@ func biorytm(btime, dtime time.Time) {
 
 	r := *rangeFlag / 2
 	d := dtime.Add(-time.Duration(r) * day) // data początku zakresu
-	n := ndays(btime, d)     // liczba dni od urodzenia do początku zakresu
-
-	dmark := " "
-	fmark := " "
-	pmark := " "
-	imark := " "
+	n := ndays(btime, d)                    // ilość dni do początku zakresu
 
 	for i := 0; i < *rangeFlag; i++ {
 		f, p, i := bioDay(n)
 		fv, pv, iv := bioVal(n)
 
-		if d == dtime { dmark = "*" }
+		dmark := emptyMark
+		if d == dtime {
+			dmark = dateMark
+		}
+		fmark, pmark, imark := marks(f, p, i)
 
 		fmt.Printf("%s%s ", d.Format(dateFmt), dmark)
 		fmt.Printf(" F: %+5.2f (%2d/%d)%s ", fv, f, fPeriod, fmark)
@@ -101,14 +141,7 @@ func biorytm(btime, dtime time.Time) {
 
 		d = d.Add(day)
 		n++
-		dmark = " "
-		fmark = " "
-		pmark = " "
-		imark = " "
 	}
-	_ = fmark
-	_ = pmark
-	_ = imark
 }
 
 func main() {
