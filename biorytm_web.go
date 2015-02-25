@@ -3,30 +3,23 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
 )
 
-var (
-	addr = flag.String("addr", ":5050", "adres usługi")
-)
-
 func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	fmt.Printf("form: %v\n", r.Form)
-	fmt.Printf("request: %s\n", r)
+	fmt.Printf("request: %v\n", r)
 	fmt.Fprintln(w, "biorytmHandler: test")
 }
 
-func main() {
-	flag.Parse()
-
+func biorytmWeb() {
 	http.HandleFunc("/", biorytmHandler)
 
-	log.Printf("adres usługi: %s", *addr)
-	err := http.ListenAndServe(*addr, nil)
+	log.Printf("adres usługi: %s", *httpAddr)
+	err := http.ListenAndServe(*httpAddr, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

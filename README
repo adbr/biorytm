@@ -4,7 +4,8 @@ Sposób użycie:
 
 	biorytm [flagi] data_urodzenia [data_biorytmu]
 
-	data_urodzenia i data_biorytmu mają format 'yyyy-mm-dd'`
+	data_urodzenia i data_biorytmu mają format 'yyyy-mm-dd'
 
 	Flagi:
 		-range=15: zakres dni biorytmu
+		-http:"": adres usługi HTTP (np. ':5050')
