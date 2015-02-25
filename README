@@ -8,4 +8,4 @@ Sposób użycie:
 
 	Flagi:
 		-range=15: zakres dni biorytmu
-		-http:"": adres usługi HTTP (np. ':5050')
+		-http="": adres usługi HTTP (np. ':5050')

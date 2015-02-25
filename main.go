@@ -12,7 +12,7 @@ const usageStr = `usage: biorytm [flagi] data_urodzenia [data_biorytmu]
 	data w formacie 'yyyy-mm-dd'
 	flagi:
 		-range=15: zakres dni biorytmu
-		-http:"": adres usługi HTTP (np. ':5050')`
+		-http="": adres usługi HTTP (np. ':5050')`
 
 const dateFmt = "2006-01-02"
 

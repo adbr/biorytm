@@ -50,19 +50,19 @@ func marks(f, p, i int) (fmark, pmark, imark string) {
 	return
 }
 
-// printBiorytm drukuje biorytm na w.
-func printBiorytm(w io.Writer, btime, dtime time.Time) {
+// printBiorytm drukuje nd dni biorytmu na w.
+func printBiorytm(w io.Writer, btime, dtime time.Time, nd int) {
 	fmt.Fprintf(w, "data urodzenia: %s\n", btime.Format(dateFmt))
 	fmt.Fprintf(w, "data docelowa:  %s\n", dtime.Format(dateFmt))
 	fmt.Fprintf(w, "liczba dni:     %d\n", ndays(btime, dtime))
 
 	day := 24 * time.Hour
 
-	r := *rangeFlag / 2
+	r := nd / 2
 	d := dtime.Add(-time.Duration(r) * day) // data początku zakresu
 	n := ndays(btime, d)                    // ilość dni do początku zakresu
 
-	for i := 0; i < *rangeFlag; i++ {
+	for i := 0; i < nd; i++ {
 		f, p, i := bioDay(n)
 		fv, pv, iv := bioVal(n)
 
@@ -114,5 +114,5 @@ func biorytmCli() {
 		usage()
 	}
 
-	printBiorytm(os.Stdout, btime, dtime)
+	printBiorytm(os.Stdout, btime, dtime, *rangeFlag)
 }

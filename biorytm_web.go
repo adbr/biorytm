@@ -6,13 +6,23 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
+
+const webUsageStr = `usage: URL/?born=<date>&date=<date>&range=<ndays>
+	parametry:
+		born: data urodzenia
+		date: data aktualna (jeśli nie występuje, to time.Now())
+		range: liczba dni (domyślnie 15)
+	example:
+		localhost:5050/?born=1970-01-02&date=2015-01-01&range=20`
 
 func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		fmt.Fprintln(w, err)
+		fmt.Fprintln(w, webUsageStr)
 		return
 	}
 
@@ -25,11 +35,13 @@ func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 	bornPar, ok := r.Form["born"]
 	if !ok {
 		fmt.Fprintln(w, "brak parametru 'born' (data urodzenia)")
+		fmt.Fprintln(w, webUsageStr)
 		return
 	}
 	born, err = time.Parse(dateFmt, bornPar[0])
 	if err != nil {
 		fmt.Fprintln(w, err)
+		fmt.Fprintln(w, webUsageStr)
 		return
 	}
 
@@ -39,6 +51,7 @@ func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 		date, err = time.Parse(dateFmt, datePar[0])
 		if err != nil {
 			fmt.Fprintln(w, err)
+			fmt.Fprintln(w, webUsageStr)
 			return
 		}
 	} else {
@@ -46,7 +59,19 @@ func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 		date = time.Date(n.Year(), n.Month(), n.Day(), 0, 0, 0, 0, time.UTC)
 	}
 
-	printBiorytm(w, born, date)
+	// pobierz parametr range
+	rangePar, ok := r.Form["range"]
+	if ok {
+		n, err := strconv.Atoi(rangePar[0])
+		if err != nil {
+			fmt.Fprintln(w, err)
+			fmt.Fprintln(w, webUsageStr)
+			return
+		}
+		*rangeFlag = n
+	}
+
+	printBiorytm(w, born, date, *rangeFlag)
 }
 
 func biorytmWeb() {
