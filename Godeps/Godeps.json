@@ -1,0 +1,5 @@
+{
+	"ImportPath": "biorytm",
+	"GoVersion": "go1.4.2",
+	"Deps": []
+}
