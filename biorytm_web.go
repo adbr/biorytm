@@ -31,7 +31,7 @@ const formTmplStr = `
 	Podaj datę urodzenia i datę biorytmu w formacie yyyy-mm-dd
 	</p>
 
-	<form action="/">
+	<form action="/text/">
 		<table>
 			<tr>
 				<td style="text-align:right">data urodzenia:</td>
@@ -79,7 +79,37 @@ var (
 	outputTmpl *template.Template
 )
 
-func biorytmHandler(w http.ResponseWriter, r *http.Request) {
+func biorytmWeb() {
+	var err error
+
+	formTmpl = template.New("form")
+	formTmpl, err = formTmpl.Parse(formTmplStr)
+	if err != nil {
+		log.Fatalf("template 'form' parse: %s", err)
+	}
+
+	outputTmpl = template.New("output")
+	outputTmpl, err = outputTmpl.Parse(outputTmplStr)
+	if err != nil {
+		log.Fatalf("template 'output' parse: %s", err)
+	}
+
+	http.HandleFunc("/", mainHandler)
+	http.HandleFunc("/text/", biorytmTextHandler)
+	http.HandleFunc("/graph/", biorytmGraphHandler)
+
+	log.Printf("adres usługi: %s", *httpAddr)
+	err = http.ListenAndServe(*httpAddr, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func mainHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/text/", http.StatusFound)
+}
+
+func biorytmTextHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		fmt.Fprintf(w, "ParseForm(): %s\n", err)
@@ -153,26 +183,76 @@ func biorytmHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func biorytmWeb() {
-	var err error
-
-	formTmpl = template.New("form")
-	formTmpl, err = formTmpl.Parse(formTmplStr)
+func biorytmGraphHandler(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
 	if err != nil {
-		log.Fatalf("template 'form' parse: %s", err)
+		fmt.Fprintf(w, "ParseForm(): %s\n", err)
+		return
 	}
 
-	outputTmpl = template.New("output")
-	outputTmpl, err = outputTmpl.Parse(outputTmplStr)
-	if err != nil {
-		log.Fatalf("template 'output' parse: %s", err)
+	// sprawdź czy podano parametr 'born'
+	_, ok := r.Form["born"]
+	if !ok {
+		// nie ma parametru 'born': wyświetl formatkę
+		now := time.Now().Format(dateFmt)
+		err := formTmpl.Execute(w, now)
+		if err != nil {
+			log.Printf("execute form template: %s", err)
+		}
+		return
 	}
 
-	http.HandleFunc("/", biorytmHandler)
+	// jest parametr 'born': parsuj argumenty i wyświetl wynik
 
-	log.Printf("adres usługi: %s", *httpAddr)
-	err = http.ListenAndServe(*httpAddr, nil)
+	var (
+		born time.Time // data urodzenia
+		date time.Time // data aktualna
+	)
+
+	// pobierz datę urodzenia
+	bornPar, ok := r.Form["born"]
+	born, err = time.Parse(dateFmt, bornPar[0])
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintf(w, "błędna data urodzenia: %s\n", err)
+		return
+	}
+
+	// pobierz datę aktualną
+	datePar, ok := r.Form["date"]
+	if ok {
+		date, err = time.Parse(dateFmt, datePar[0])
+		if err != nil {
+			fmt.Fprintf(w, "błędna data aktualna: %s\n", err)
+			return
+		}
+	} else {
+		n := time.Now()
+		date = time.Date(n.Year(), n.Month(), n.Day(), 0, 0, 0, 0, time.UTC)
+	}
+
+	// pobierz parametr range
+	rangePar, ok := r.Form["range"]
+	if ok {
+		n, err := strconv.Atoi(rangePar[0])
+		if err != nil {
+			fmt.Fprintf(w, "błędny zakres: %s\n", err)
+			return
+		}
+
+		const maxRange = 1000
+		if n > maxRange {
+			fmt.Fprintf(w, "za duża wartość zakresu (max: %d): %d\n", maxRange, n)
+			return
+		}
+		*rangeFlag = n
+	}
+
+	// wyświetl biorytm
+	buf := new(bytes.Buffer)
+	printBiorytm(buf, born, date, *rangeFlag)
+
+	err = outputTmpl.Execute(w, buf.String())
+	if err != nil {
+		log.Printf("execute output template: %s", err)
 	}
 }
