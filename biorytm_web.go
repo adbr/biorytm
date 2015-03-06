@@ -4,6 +4,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"html/template"
 	"log"
@@ -12,16 +13,8 @@ import (
 	"time"
 )
 
-const webUsageStr = `usage: URL/?born=<date>&date=<date>&range=<ndays>
-	parametry:
-		born: data urodzenia
-		date: data aktualna (jeśli nie występuje, to time.Now())
-		range: liczba dni (domyślnie 15)
-	example:
-		localhost:5050/?born=1970-01-02&date=2015-01-01&range=20`
-
-// template dla formatki
-const formTmplStr = `
+// template dla formatki biorytmu tekstowego
+const formTextTmplStr = `
 <html>
 <head>
 	<title>Biorytm</title>
@@ -31,7 +24,7 @@ const formTmplStr = `
 	Podaj datę urodzenia i datę biorytmu w formacie yyyy-mm-dd
 	</p>
 
-	<form action="/text/">
+	<form action="/text/biorytm/">
 		<table>
 			<tr>
 				<td style="text-align:right">data urodzenia:</td>
@@ -39,11 +32,11 @@ const formTmplStr = `
 			</tr>
 			<tr>
 				<td style="text-align:right">data aktualna:</td>
-				<td><input type="text" name="date" value="{{ . }}"></td>
+				<td><input type="text" name="date" value="{{ .DateString }}"></td>
 			</tr>
 			<tr>
 				<td style="text-align:right">ilość dni:</td>
-				<td><input type="text" name="range" value="30"></td>
+				<td><input type="text" name="range" value="{{ .Days }}"></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -55,8 +48,8 @@ const formTmplStr = `
 </html>
 `
 
-// template dla wyniku
-const outputTmplStr = `
+// template dla wyniku biorytmu tekstowego
+const outputTextTmplStr = `
 <html>
 <head>
 	<title>Biorytm</title>
@@ -75,30 +68,41 @@ const outputTmplStr = `
 `
 
 var (
-	formTmpl   *template.Template
-	outputTmpl *template.Template
+	formTextTmpl   = template.New("formText")
+	outputTextTmpl = template.New("outputText")
 )
+
+// parametry biorytmu
+type biorytm struct {
+	Born time.Time
+	Date time.Time
+	Days int
+}
+
+func (b biorytm) DateString() string {
+	return b.Date.Format(dateFmt)
+}
 
 func biorytmWeb() {
 	var err error
 
-	formTmpl = template.New("form")
-	formTmpl, err = formTmpl.Parse(formTmplStr)
+	formTextTmpl, err = formTextTmpl.Parse(formTextTmplStr)
 	if err != nil {
-		log.Fatalf("template 'form' parse: %s", err)
+		log.Fatalf("template 'formText' parse: %s", err)
 	}
 
-	outputTmpl = template.New("output")
-	outputTmpl, err = outputTmpl.Parse(outputTmplStr)
+	outputTextTmpl, err = outputTextTmpl.Parse(outputTextTmplStr)
 	if err != nil {
-		log.Fatalf("template 'output' parse: %s", err)
+		log.Fatalf("template 'outputText' parse: %s", err)
 	}
 
 	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/text/", biorytmTextHandler)
-	http.HandleFunc("/graph/", biorytmGraphHandler)
+	http.HandleFunc("/text/", textHandler)
+	http.HandleFunc("/text/biorytm/", textBiorytmHandler)
+	//http.HandleFunc("/graph/", graphHandler)
+	//http.HandleFunc("/graph/biorytm/", graphBiorytmHandler)
 
-	log.Printf("adres usługi: %s", *httpAddr)
+	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
 	err = http.ListenAndServe(*httpAddr, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -109,150 +113,91 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/text/", http.StatusFound)
 }
 
-func biorytmTextHandler(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
+// textHandler wyświetla formatkę dla danych wejściowych.
+func textHandler(w http.ResponseWriter, r *http.Request) {
+	// ustaw domyślne dane dla formatki
+	b := biorytm{
+		Date: time.Now(),
+		Days: 30,
+	}
+
+	err := formTextTmpl.Execute(w, b)
 	if err != nil {
-		fmt.Fprintf(w, "ParseForm(): %s\n", err)
-		return
+		log.Printf("execute formText template: %s", err)
+		fmt.Fprintf(w, "execute formText template: %s\n", err)
 	}
+	return
+}
 
-	// sprawdź czy podano parametr 'born'
-	_, ok := r.Form["born"]
-	if !ok {
-		// nie ma parametru 'born': wyświetl formatkę
-		now := time.Now().Format(dateFmt)
-		err := formTmpl.Execute(w, now)
-		if err != nil {
-			log.Printf("execute form template: %s", err)
-		}
-		return
-	}
-
-	// jest parametr 'born': parsuj argumenty i wyświetl wynik
-
-	var (
-		born time.Time // data urodzenia
-		date time.Time // data aktualna
-	)
-
-	// pobierz datę urodzenia
-	bornPar, ok := r.Form["born"]
-	born, err = time.Parse(dateFmt, bornPar[0])
+// textBiorytmHandler wyświetla biorytm w postaci tekstowej.
+func textBiorytmHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := getFormTextData(r)
 	if err != nil {
-		fmt.Fprintf(w, "błędna data urodzenia: %s\n", err)
+		log.Println(err)
+		fmt.Fprintln(w, err)
 		return
 	}
 
-	// pobierz datę aktualną
-	datePar, ok := r.Form["date"]
-	if ok {
-		date, err = time.Parse(dateFmt, datePar[0])
-		if err != nil {
-			fmt.Fprintf(w, "błędna data aktualna: %s\n", err)
-			return
-		}
-	} else {
-		n := time.Now()
-		date = time.Date(n.Year(), n.Month(), n.Day(), 0, 0, 0, 0, time.UTC)
-	}
-
-	// pobierz parametr range
-	rangePar, ok := r.Form["range"]
-	if ok {
-		n, err := strconv.Atoi(rangePar[0])
-		if err != nil {
-			fmt.Fprintf(w, "błędny zakres: %s\n", err)
-			return
-		}
-
-		const maxRange = 1000
-		if n > maxRange {
-			fmt.Fprintf(w, "za duża wartość zakresu (max: %d): %d\n", maxRange, n)
-			return
-		}
-		*rangeFlag = n
-	}
-
-	// wyświetl biorytm
 	buf := new(bytes.Buffer)
-	printBiorytm(buf, born, date, *rangeFlag)
+	printBiorytm(buf, b.Born, b.Date, b.Days)
 
-	err = outputTmpl.Execute(w, buf.String())
+	err = outputTextTmpl.Execute(w, buf.String())
 	if err != nil {
-		log.Printf("execute output template: %s", err)
+		log.Printf("execute outputText template: %s", err)
+		fmt.Fprintf(w, "execute outputText template: %s\n", err)
 	}
 }
 
-func biorytmGraphHandler(w http.ResponseWriter, r *http.Request) {
+// getFormTextData pobiera z requestu parsuje parametry biorytmu.
+func getFormTextData(r *http.Request) (biorytm, error) {
+	b := biorytm{}
+
 	err := r.ParseForm()
 	if err != nil {
-		fmt.Fprintf(w, "ParseForm(): %s\n", err)
-		return
+		return b, err
 	}
-
-	// sprawdź czy podano parametr 'born'
-	_, ok := r.Form["born"]
-	if !ok {
-		// nie ma parametru 'born': wyświetl formatkę
-		now := time.Now().Format(dateFmt)
-		err := formTmpl.Execute(w, now)
-		if err != nil {
-			log.Printf("execute form template: %s", err)
-		}
-		return
-	}
-
-	// jest parametr 'born': parsuj argumenty i wyświetl wynik
-
-	var (
-		born time.Time // data urodzenia
-		date time.Time // data aktualna
-	)
 
 	// pobierz datę urodzenia
+
 	bornPar, ok := r.Form["born"]
-	born, err = time.Parse(dateFmt, bornPar[0])
+	if !ok {
+		return b, errors.New("brak parametru 'born' (data urodzenia)")
+	}
+
+	b.Born, err = time.Parse(dateFmt, bornPar[0])
 	if err != nil {
-		fmt.Fprintf(w, "błędna data urodzenia: %s\n", err)
-		return
+		return b, fmt.Errorf("błędna data urodzenia: %s", err)
 	}
 
 	// pobierz datę aktualną
+
 	datePar, ok := r.Form["date"]
-	if ok {
-		date, err = time.Parse(dateFmt, datePar[0])
-		if err != nil {
-			fmt.Fprintf(w, "błędna data aktualna: %s\n", err)
-			return
-		}
-	} else {
-		n := time.Now()
-		date = time.Date(n.Year(), n.Month(), n.Day(), 0, 0, 0, 0, time.UTC)
+	if !ok {
+		return b, errors.New("brak parametru 'date' (data aktualna)")
+	}
+
+	b.Date, err = time.Parse(dateFmt, datePar[0])
+	if err != nil {
+		return b, fmt.Errorf("błędna data aktualna: %s", err)
 	}
 
 	// pobierz parametr range
+
 	rangePar, ok := r.Form["range"]
-	if ok {
-		n, err := strconv.Atoi(rangePar[0])
-		if err != nil {
-			fmt.Fprintf(w, "błędny zakres: %s\n", err)
-			return
-		}
-
-		const maxRange = 1000
-		if n > maxRange {
-			fmt.Fprintf(w, "za duża wartość zakresu (max: %d): %d\n", maxRange, n)
-			return
-		}
-		*rangeFlag = n
+	if !ok {
+		return b, errors.New("brak parametru 'range' (liczba dni biorytmu)")
 	}
 
-	// wyświetl biorytm
-	buf := new(bytes.Buffer)
-	printBiorytm(buf, born, date, *rangeFlag)
-
-	err = outputTmpl.Execute(w, buf.String())
+	n, err := strconv.Atoi(rangePar[0])
 	if err != nil {
-		log.Printf("execute output template: %s", err)
+		return b, fmt.Errorf("błędny zakres dni: %s", err)
 	}
+
+	const maxRange = 1000
+	if n > maxRange {
+		return b, fmt.Errorf("za duża wartość zakresu (max: %d): %d", maxRange, n)
+	}
+	b.Days = n
+
+	return b, nil
 }
