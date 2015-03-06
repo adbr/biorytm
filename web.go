@@ -30,6 +30,22 @@ func (b biorytm) DateString() string {
 }
 
 func biorytmWeb() {
+	initTemplates()
+
+	http.HandleFunc("/", mainHandler)
+	http.HandleFunc("/text/form/", textFormHandler)
+	http.HandleFunc("/text/display/", textDisplayHandler)
+	//http.HandleFunc("/graph/form/", graphFormHandler)
+	//http.HandleFunc("/graph/display/", graphDisplayHandler)
+
+	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
+	err := http.ListenAndServe(*httpAddr, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func initTemplates() {
 	var err error
 
 	textFormTmpl, err = textFormTmpl.Parse(textFormHTML)
@@ -40,18 +56,6 @@ func biorytmWeb() {
 	textDisplayTmpl, err = textDisplayTmpl.Parse(textDisplayHTML)
 	if err != nil {
 		log.Fatalf("błąd parsowania template 'textDisplayHTML': %s", err)
-	}
-
-	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/text/form/", textFormHandler)
-	http.HandleFunc("/text/display/", textDisplayHandler)
-	//http.HandleFunc("/graph/form/", graphFormHandler)
-	//http.HandleFunc("/graph/display/", graphDisplayHandler)
-
-	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
-	err = http.ListenAndServe(*httpAddr, nil)
-	if err != nil {
-		log.Fatal(err)
 	}
 }
 
