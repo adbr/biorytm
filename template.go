@@ -2,8 +2,9 @@
 
 package main
 
-// template dla formatki biorytmu tekstowego
-const formTextTmplStr = `
+// textFormHTML definiuje template formatki do wprowadzania danych dla
+// biorytmu w wersji tekstowej.
+const textFormHTML = `
 <html>
 <head>
 	<title>Biorytm</title>
@@ -13,7 +14,7 @@ const formTextTmplStr = `
 	Podaj datę urodzenia i datę biorytmu w formacie yyyy-mm-dd
 	</p>
 
-	<form action="/text/biorytm/">
+	<form action="/text/display/">
 		<table>
 			<tr>
 				<td style="text-align:right">data urodzenia:</td>
@@ -37,8 +38,9 @@ const formTextTmplStr = `
 </html>
 `
 
-// template dla wyniku biorytmu tekstowego
-const outputTextTmplStr = `
+// textDisplayHTML definiuje template strony wyświetlającej biorytm w
+// postaci tekstowej.
+const textDisplayHTML = `
 <html>
 <head>
 	<title>Biorytm</title>

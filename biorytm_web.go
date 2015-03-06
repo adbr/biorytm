@@ -14,11 +14,11 @@ import (
 )
 
 var (
-	formTextTmpl   = template.New("formText")
-	outputTextTmpl = template.New("outputText")
+	textFormTmpl    = template.New("textForm")
+	textDisplayTmpl = template.New("textDisplay")
 )
 
-// parametry biorytmu
+// biorytm grupuje parametry biorytmu.
 type biorytm struct {
 	Born time.Time
 	Date time.Time
@@ -32,21 +32,21 @@ func (b biorytm) DateString() string {
 func biorytmWeb() {
 	var err error
 
-	formTextTmpl, err = formTextTmpl.Parse(formTextTmplStr)
+	textFormTmpl, err = textFormTmpl.Parse(textFormHTML)
 	if err != nil {
-		log.Fatalf("template 'formText' parse: %s", err)
+		log.Fatalf("błąd parsowania template 'textFormHTML': %s", err)
 	}
 
-	outputTextTmpl, err = outputTextTmpl.Parse(outputTextTmplStr)
+	textDisplayTmpl, err = textDisplayTmpl.Parse(textDisplayHTML)
 	if err != nil {
-		log.Fatalf("template 'outputText' parse: %s", err)
+		log.Fatalf("błąd parsowania template 'textDisplayHTML': %s", err)
 	}
 
 	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/text/", textHandler)
-	http.HandleFunc("/text/biorytm/", textBiorytmHandler)
-	//http.HandleFunc("/graph/", graphHandler)
-	//http.HandleFunc("/graph/biorytm/", graphBiorytmHandler)
+	http.HandleFunc("/text/form/", textFormHandler)
+	http.HandleFunc("/text/display/", textDisplayHandler)
+	//http.HandleFunc("/graph/form/", graphFormHandler)
+	//http.HandleFunc("/graph/display/", graphDisplayHandler)
 
 	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
 	err = http.ListenAndServe(*httpAddr, nil)
@@ -56,28 +56,28 @@ func biorytmWeb() {
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/text/", http.StatusFound)
+	http.Redirect(w, r, "/text/form/", http.StatusFound)
 }
 
-// textHandler wyświetla formatkę dla danych wejściowych.
-func textHandler(w http.ResponseWriter, r *http.Request) {
+// textFormHandler wyświetla formatkę dla wprowadzania danych biorytmu
+// w postaci tekstowej.
+func textFormHandler(w http.ResponseWriter, r *http.Request) {
 	// ustaw domyślne dane dla formatki
 	b := biorytm{
 		Date: time.Now(),
 		Days: 30,
 	}
 
-	err := formTextTmpl.Execute(w, b)
+	err := textFormTmpl.Execute(w, b)
 	if err != nil {
-		log.Printf("execute formText template: %s", err)
-		fmt.Fprintf(w, "execute formText template: %s\n", err)
+		log.Printf("błąd wykonania template 'textFormTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'textFormTmpl': %s\n", err)
 	}
-	return
 }
 
-// textBiorytmHandler wyświetla biorytm w postaci tekstowej.
-func textBiorytmHandler(w http.ResponseWriter, r *http.Request) {
-	b, err := getFormTextData(r)
+// textDisplayHandler wyświetla biorytm w postaci tekstowej.
+func textDisplayHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := getTextFormData(r)
 	if err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
@@ -87,15 +87,15 @@ func textBiorytmHandler(w http.ResponseWriter, r *http.Request) {
 	buf := new(bytes.Buffer)
 	printBiorytm(buf, b.Born, b.Date, b.Days)
 
-	err = outputTextTmpl.Execute(w, buf.String())
+	err = textDisplayTmpl.Execute(w, buf.String())
 	if err != nil {
-		log.Printf("execute outputText template: %s", err)
-		fmt.Fprintf(w, "execute outputText template: %s\n", err)
+		log.Printf("błąd wykonania template 'textDisplayTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'textDisplayTmpl': %s\n", err)
 	}
 }
 
-// getFormTextData pobiera z requestu parsuje parametry biorytmu.
-func getFormTextData(r *http.Request) (biorytm, error) {
+// getTextFormData pobiera z requestu i parsuje parametry biorytmu.
+func getTextFormData(r *http.Request) (biorytm, error) {
 	b := biorytm{}
 
 	err := r.ParseForm()
