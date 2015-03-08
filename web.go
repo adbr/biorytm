@@ -14,8 +14,10 @@ import (
 )
 
 var (
-	textFormTmpl    = template.New("textForm")
-	textDisplayTmpl = template.New("textDisplay")
+	textFormTmpl     = template.New("textForm")
+	textDisplayTmpl  = template.New("textDisplay")
+	graphFormTmpl    = template.New("graphForm")
+	graphDisplayTmpl = template.New("graphDisplay")
 )
 
 // biorytm grupuje parametry biorytmu.
@@ -35,8 +37,8 @@ func biorytmWeb() {
 	http.HandleFunc("/", mainHandler)
 	http.HandleFunc("/text/form/", textFormHandler)
 	http.HandleFunc("/text/display/", textDisplayHandler)
-	//http.HandleFunc("/graph/form/", graphFormHandler)
-	//http.HandleFunc("/graph/display/", graphDisplayHandler)
+	http.HandleFunc("/graph/form/", graphFormHandler)
+	http.HandleFunc("/graph/display/", graphDisplayHandler)
 
 	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
 	err := http.ListenAndServe(*httpAddr, nil)
@@ -57,10 +59,20 @@ func initTemplates() {
 	if err != nil {
 		log.Fatalf("błąd parsowania template 'textDisplayHTML': %s", err)
 	}
+
+	graphFormTmpl, err = graphFormTmpl.Parse(graphFormHTML)
+	if err != nil {
+		log.Fatalf("błąd parsowania template 'graphFormHTML': %s", err)
+	}
+
+	graphDisplayTmpl, err = graphDisplayTmpl.Parse(graphDisplayHTML)
+	if err != nil {
+		log.Fatalf("błąd parsowania template 'graphDisplayHTML': %s", err)
+	}
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/text/form/", http.StatusFound)
+	http.Redirect(w, r, "/graph/form/", http.StatusFound)
 }
 
 // textFormHandler wyświetla formatkę dla wprowadzania danych biorytmu
@@ -95,6 +107,41 @@ func textDisplayHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("błąd wykonania template 'textDisplayTmpl': %s", err)
 		fmt.Fprintf(w, "błąd wykonania template 'textDisplayTmpl': %s\n", err)
+	}
+}
+
+// graphFormHandler wyświetla formatkę dla wprowadzania danych biorytmu
+// w postaci graficznej.
+func graphFormHandler(w http.ResponseWriter, r *http.Request) {
+	// ustaw domyślne dane dla formatki
+	b := biorytm{
+		Date: time.Now(),
+		Days: 30,
+	}
+
+	err := graphFormTmpl.Execute(w, b)
+	if err != nil {
+		log.Printf("błąd wykonania template 'graphFormTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'graphFormTmpl': %s\n", err)
+	}
+}
+
+// graphDisplayHandler wyświetla biorytm w postaci graficznej.
+func graphDisplayHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := getTextFormData(r)
+	if err != nil {
+		log.Println(err)
+		fmt.Fprintln(w, err)
+		return
+	}
+
+	buf := new(bytes.Buffer)
+	printBiorytm(buf, b.Born, b.Date, b.Days)
+
+	err = graphDisplayTmpl.Execute(w, buf.String())
+	if err != nil {
+		log.Printf("błąd wykonania template 'graphDisplayTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'graphDisplayTmpl': %s\n", err)
 	}
 }
 
