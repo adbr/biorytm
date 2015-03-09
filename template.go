@@ -100,15 +100,25 @@ const graphDisplayHTML = `
 <html>
 <head>
 	<title>Biorytm</title>
-	<!--
-	<style>
-		body {background-color:black; color:#FFC200}
-	</style>
-	-->
 </head>
 <body>
+	<h2>
+	Biorytm
+	</h2>
+
+	<table>
+		<tr>
+			<td>Data urodzenia:</td>
+			<td>{{ .BornString }}</td>
+		</tr>
+		<tr>
+			<td>Data biorytmu:</td>
+			<td>{{ .DateString }}</td>
+		</tr>
+	</table>
+
 	<p>
-	<pre>{{ . }}</pre>
+	<img src="data:image/png;base64,{{ .ImageString }}" alt="Wykres biorytmu">
 	</p>
 </body>
 </html>

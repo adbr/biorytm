@@ -4,9 +4,13 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"html/template"
+	"image"
+	"image/color"
+	"image/png"
 	"log"
 	"net/http"
 	"strconv"
@@ -22,13 +26,18 @@ var (
 
 // biorytm grupuje parametry biorytmu.
 type biorytm struct {
-	Born time.Time
-	Date time.Time
-	Days int
+	Born        time.Time
+	Date        time.Time
+	Days        int
+	ImageString string // obrazek zakodowany w base64
 }
 
 func (b biorytm) DateString() string {
 	return b.Date.Format(dateFmt)
+}
+
+func (b biorytm) BornString() string {
+	return b.Born.Format(dateFmt)
 }
 
 func biorytmWeb() {
@@ -135,14 +144,51 @@ func graphDisplayHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	buf := new(bytes.Buffer)
-	printBiorytm(buf, b.Born, b.Date, b.Days)
+	img := biorytmImage()
+	b.ImageString, err = encodeImage(img)
+	if err != nil {
+		log.Println(err)
+		fmt.Fprintln(w, err)
+		return
+	}
 
-	err = graphDisplayTmpl.Execute(w, buf.String())
+	err = graphDisplayTmpl.Execute(w, b)
 	if err != nil {
 		log.Printf("błąd wykonania template 'graphDisplayTmpl': %s", err)
 		fmt.Fprintf(w, "błąd wykonania template 'graphDisplayTmpl': %s\n", err)
 	}
+}
+
+// biorytmImage zwraca obrazek z wykresem biorytmu.
+func biorytmImage() image.Image {
+	r := image.Rect(0, 0, 800, 600)
+	img := image.NewRGBA(r)
+
+	back := color.RGBA{0, 50, 128, 128} // background color
+
+	// ustaw kolor tła
+	bounds := img.Bounds()
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			img.Set(x, y, back)
+		}
+	}
+
+	return img
+}
+
+func encodeImage(img image.Image) (string, error) {
+	buf := new(bytes.Buffer)
+	b64 := base64.NewEncoder(base64.StdEncoding, buf)
+
+	err := png.Encode(b64, img)
+	if err != nil {
+		return "", err
+	}
+	b64.Close()
+
+	s := buf.String()
+	return s, nil
 }
 
 // getTextFormData pobiera z requestu i parsuje parametry biorytmu.
