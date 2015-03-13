@@ -49,8 +49,8 @@ func biorytmWeb() {
 	http.HandleFunc("/graph/form/", graphFormHandler)
 	http.HandleFunc("/graph/display/", graphDisplayHandler)
 
-	log.Printf("biorytm: adres usługi HTTP: %s", *httpAddr)
-	err := http.ListenAndServe(*httpAddr, nil)
+	log.Printf("biorytm: adres usługi HTTP: %s", *httpFlag)
+	err := http.ListenAndServe(*httpFlag, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

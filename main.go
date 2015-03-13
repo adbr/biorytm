@@ -8,17 +8,23 @@ import (
 	"os"
 )
 
-const usageStr = `usage: biorytm [flagi] data_urodzenia [data_biorytmu]
-	data w formacie 'yyyy-mm-dd'
-	flagi:
-		-range=15: zakres dni biorytmu
-		-http="": adres usługi HTTP (np. ':5050')`
+const usageStr = `usage:
+	biorytm [flagi] -born=<data urodzenia>
+	biorytm [flagi] -http=<host:port>
+
+flagi:
+	-born="": data urodzenia w formacie yyyy-mm-dd
+	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
+	-http="": adres usługi HTTP (np. ':5050')
+	-range=15: zakres dni biorytmu`
 
 const dateFmt = "2006-01-02"
 
 var (
+	bornFlag  = flag.String("born", "", "data urodzenia (yyyy-mm-dd)")
+	dateFlag  = flag.String("date", "", "data biorytmu (yyyy-mm-dd)")
+	httpFlag  = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
 	rangeFlag = flag.Int("range", 15, "zakres dni biorytmu")
-	httpAddr  = flag.String("http", "", "adres usługi (np. ':5050')")
 )
 
 func usage() {
@@ -30,7 +36,7 @@ func main() {
 	flag.Usage = usage
 	flag.Parse()
 
-	if *httpAddr != "" {
+	if *httpFlag != "" {
 		biorytmWeb()
 		return
 	}

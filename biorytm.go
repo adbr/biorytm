@@ -37,9 +37,9 @@ func ndays(t1, t2 time.Time) int64 {
 // bioDay zwraca numer cyklu fizycznego, psychicznego i intelektualnego
 // dla dnia n od urodzenia.
 func bioDay(n int64) (f, p, i int) {
-	f = int(n%fPeriod) + 1
-	p = int(n%pPeriod) + 1
-	i = int(n%iPeriod) + 1
+	f = int(n % fPeriod)
+	p = int(n % pPeriod)
+	i = int(n % iPeriod)
 	return
 }
 
