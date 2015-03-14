@@ -117,7 +117,7 @@ func biorytmCli() {
 	}
 
 	if date.Before(born) {
-		fmt.Fprintln(os.Stderr, "data przed datą urodzenia")
+		fmt.Fprintln(os.Stderr, "data biorytmu wcześniejsza niż data urodzenia")
 		usage()
 	}
 

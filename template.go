@@ -18,7 +18,7 @@ const textFormHTML = `
 		<table>
 			<tr>
 				<td style="text-align:right">data urodzenia:</td>
-				<td><input type="text" name="born"></td>
+				<td><input type="text" name="born" value="{{ .BornString }}"></td>
 			</tr>
 			<tr>
 				<td style="text-align:right">data aktualna:</td>
@@ -26,7 +26,7 @@ const textFormHTML = `
 			</tr>
 			<tr>
 				<td style="text-align:right">ilość dni:</td>
-				<td><input type="text" name="range" value="{{ .Days }}"></td>
+				<td><input type="text" name="range" value="{{ .Drange }}"></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -74,7 +74,7 @@ const graphFormHTML = `
 		<table>
 			<tr>
 				<td style="text-align:right">data urodzenia:</td>
-				<td><input type="text" name="born"></td>
+				<td><input type="text" name="born" value="{{ .BornString }}"></td>
 			</tr>
 			<tr>
 				<td style="text-align:right">data aktualna:</td>
@@ -82,7 +82,7 @@ const graphFormHTML = `
 			</tr>
 			<tr>
 				<td style="text-align:right">ilość dni:</td>
-				<td><input type="text" name="range" value="{{ .Days }}"></td>
+				<td><input type="text" name="range" value="{{ .Drange }}"></td>
 			</tr>
 			<tr>
 				<td></td>
