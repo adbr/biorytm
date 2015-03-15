@@ -16,15 +16,15 @@ flagi:
 	-born="": data urodzenia w formacie yyyy-mm-dd
 	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
 	-http="": adres usługi HTTP (np. ':5050')
-	-range=15: zakres dni biorytmu`
+	-days=15: zakres dni biorytmu`
 
 const dateFmt = "2006-01-02"
 
 var (
-	bornFlag  = flag.String("born", "", "data urodzenia (yyyy-mm-dd)")
-	dateFlag  = flag.String("date", "", "data biorytmu (yyyy-mm-dd)")
-	httpFlag  = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
-	rangeFlag = flag.Int("range", 15, "zakres dni biorytmu")
+	bornFlag = flag.String("born", "", "data urodzenia (yyyy-mm-dd)")
+	dateFlag = flag.String("date", "", "data biorytmu (yyyy-mm-dd)")
+	httpFlag = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
+	daysFlag = flag.Int("days", 15, "ilość dni biorytmu")
 )
 
 func usage() {

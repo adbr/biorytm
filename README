@@ -1,11 +1,11 @@
 Biorytm
 
-Sposób użycie:
+usage:
+        biorytm [flagi] -born=<data urodzenia>
+        biorytm [flagi] -http=<host:port>
 
-	biorytm [flagi] data_urodzenia [data_biorytmu]
-
-	data_urodzenia i data_biorytmu mają format 'yyyy-mm-dd'
-
-	Flagi:
-		-range=15: zakres dni biorytmu
-		-http="": adres usługi HTTP (np. ':5050')
+flagi:
+        -born="": data urodzenia w formacie yyyy-mm-dd
+        -date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
+        -http="": adres usługi HTTP (np. ':5050')
+        -days=15: zakres dni biorytmu

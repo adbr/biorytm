@@ -121,5 +121,5 @@ func biorytmCli() {
 		usage()
 	}
 
-	printBiorytm(os.Stdout, born, date, *rangeFlag)
+	printBiorytm(os.Stdout, born, date, *daysFlag)
 }

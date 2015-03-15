@@ -19,9 +19,9 @@ import (
 
 // opts zawiera wartości flag programu.
 var opts struct {
-	born   time.Time // data urodzenia
-	date   time.Time // data biorytmu
-	drange int       // liczba dni biorytmu (days range)
+	born time.Time // data urodzenia
+	date time.Time // data biorytmu
+	days int       // liczba dni biorytmu
 }
 
 // params zawiera parametry biorytmu przekazane w request.
@@ -92,8 +92,8 @@ func parseOpts() {
 		opts.date = d
 	}
 
-	// range
-	opts.drange = *rangeFlag
+	// days
+	opts.days = *daysFlag
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +110,7 @@ func formHandler(w http.ResponseWriter, r *http.Request) {
 	if !opts.date.IsZero() {
 		d.Date = opts.date.Format(dateFmt)
 	}
-	d.Days = opts.drange
+	d.Days = opts.days
 
 	err := formTmpl.Execute(w, d)
 	if err != nil {
@@ -250,7 +250,7 @@ func getParams(r *http.Request) (params, error) {
 		return p, fmt.Errorf("błędna data aktualna: %s", err)
 	}
 
-	// pobierz parametr range
+	// pobierz parametr days
 
 	daysPar, ok := r.Form["days"]
 	if !ok {
@@ -262,9 +262,9 @@ func getParams(r *http.Request) (params, error) {
 		return p, fmt.Errorf("błędny zakres dni: %s", err)
 	}
 
-	const maxRange = 1000
-	if n > maxRange {
-		return p, fmt.Errorf("za duża wartość zakresu (max: %d): %d", maxRange, n)
+	const maxDays = 1000
+	if n > maxDays {
+		return p, fmt.Errorf("za duża wartość zakresu (max: %d): %d", maxDays, n)
 	}
 	p.days = n
 
