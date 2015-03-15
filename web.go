@@ -7,7 +7,6 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
-	"html/template"
 	"image"
 	"image/color"
 	"image/png"
@@ -18,13 +17,6 @@ import (
 	"time"
 )
 
-var (
-	textFormTmpl     = template.New("textForm")
-	textDisplayTmpl  = template.New("textDisplay")
-	graphFormTmpl    = template.New("graphForm")
-	graphDisplayTmpl = template.New("graphDisplay")
-)
-
 // opts zawiera wartości flag programu.
 var opts struct {
 	born   time.Time // data urodzenia
@@ -32,26 +24,12 @@ var opts struct {
 	drange int       // liczba dni biorytmu (days range)
 }
 
-// params grupuje parametry biorytmu - dla prezentacji na stronach.
+// params zawiera parametry biorytmu przekazane w request.
 type params struct {
-	Born        time.Time // data urodzenia
-	Date        time.Time // data biorytmu
-	Drange      int       // liczba dni biorytmu (days range)
-	ImageString string    // obrazek zakodowany w base64
-}
-
-func (p params) DateString() string {
-	if p.Date.IsZero() {
-		return ""
-	}
-	return p.Date.Format(dateFmt)
-}
-
-func (p params) BornString() string {
-	if p.Born.IsZero() {
-		return ""
-	}
-	return p.Born.Format(dateFmt)
+	born time.Time // data urodzenia
+	date time.Time // data biorytmu
+	days int       // liczba dni biorytmu
+	look string    // jak prezentować biorytm [text|graph]
 }
 
 func biorytmWeb() {
@@ -59,10 +37,8 @@ func biorytmWeb() {
 	parseOpts()
 
 	http.HandleFunc("/", mainHandler)
-	http.HandleFunc("/text/form/", textFormHandler)
-	http.HandleFunc("/text/display/", textDisplayHandler)
-	http.HandleFunc("/graph/form/", graphFormHandler)
-	http.HandleFunc("/graph/display/", graphDisplayHandler)
+	http.HandleFunc("/form/", formHandler)
+	http.HandleFunc("/display/", displayHandler)
 
 	log.Printf("biorytm: adres usługi HTTP: %s", *httpFlag)
 	err := http.ListenAndServe(*httpFlag, nil)
@@ -74,29 +50,25 @@ func biorytmWeb() {
 func initTemplates() {
 	var err error
 
-	textFormTmpl, err = textFormTmpl.Parse(textFormHTML)
+	formTmpl, err = formTmpl.Parse(formHTML)
 	if err != nil {
-		log.Fatalf("błąd parsowania template 'textFormHTML': %s", err)
+		log.Fatalf("błąd parsowania template 'formHTML': %s", err)
 	}
 
-	textDisplayTmpl, err = textDisplayTmpl.Parse(textDisplayHTML)
+	textTmpl, err = textTmpl.Parse(textHTML)
 	if err != nil {
-		log.Fatalf("błąd parsowania template 'textDisplayHTML': %s", err)
+		log.Fatalf("błąd parsowania template 'textHTML': %s", err)
 	}
 
-	graphFormTmpl, err = graphFormTmpl.Parse(graphFormHTML)
+	graphTmpl, err = graphTmpl.Parse(graphHTML)
 	if err != nil {
-		log.Fatalf("błąd parsowania template 'graphFormHTML': %s", err)
-	}
-
-	graphDisplayTmpl, err = graphDisplayTmpl.Parse(graphDisplayHTML)
-	if err != nil {
-		log.Fatalf("błąd parsowania template 'graphDisplayHTML': %s", err)
+		log.Fatalf("błąd parsowania template 'graphHTML': %s", err)
 	}
 }
 
 // parseOpts parsuje wartości flag programu i ustawia zmienną opts.
 func parseOpts() {
+	// born
 	if *bornFlag != "" {
 		b, err := time.Parse(dateFmt, *bornFlag)
 		if err != nil {
@@ -106,6 +78,7 @@ func parseOpts() {
 		opts.born = b
 	}
 
+	// date
 	if *dateFlag != "" {
 		d, err := time.Parse(dateFmt, *dateFlag)
 		if err != nil {
@@ -119,95 +92,95 @@ func parseOpts() {
 		opts.date = d
 	}
 
+	// range
 	opts.drange = *rangeFlag
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/graph/form/", http.StatusFound)
+	http.Redirect(w, r, "/form/", http.StatusFound)
 }
 
-// textFormHandler wyświetla formatkę dla wprowadzania danych biorytmu
-// w postaci tekstowej.
-func textFormHandler(w http.ResponseWriter, r *http.Request) {
+// formHandler wyświetla formatkę dla wprowadzania danych biorytmu.
+func formHandler(w http.ResponseWriter, r *http.Request) {
 	// ustaw początkowe dane dla formatki
-	p := params{
-		Born:   opts.born,
-		Date:   opts.date,
-		Drange: opts.drange,
+	d := formData{}
+	if !opts.born.IsZero() {
+		d.Born = opts.born.Format(dateFmt)
 	}
+	if !opts.date.IsZero() {
+		d.Date = opts.date.Format(dateFmt)
+	}
+	d.Days = opts.drange
 
-	err := textFormTmpl.Execute(w, p)
+	err := formTmpl.Execute(w, d)
 	if err != nil {
-		log.Printf("błąd wykonania template 'textFormTmpl': %s", err)
-		fmt.Fprintf(w, "błąd wykonania template 'textFormTmpl': %s\n", err)
+		log.Printf("błąd wykonania template 'formTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'formTmpl': %s\n", err)
 	}
 }
 
-// textDisplayHandler wyświetla biorytm w postaci tekstowej.
-func textDisplayHandler(w http.ResponseWriter, r *http.Request) {
-	p, err := getTextFormData(r)
+// displayHandler wyświetla biorytm w wybranej postaci.
+func displayHandler(w http.ResponseWriter, r *http.Request) {
+	p, err := getParams(r)
 	if err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
 		return
 	}
 
-	if p.Date.Before(p.Born) {
-		log.Printf("data biorytmu (%s) wcześniejsza niż data urodzenia (%s)",
-			p.DateString(), p.BornString())
-		fmt.Fprintf(w, "data biorytmu (%s) wcześniejsza niż data urodzenia (%s)\n",
-			p.DateString(), p.BornString())
+	if p.date.Before(p.born) {
+		born := p.born.Format(dateFmt)
+		date := p.date.Format(dateFmt)
+		log.Printf("data (%s) wcześniejsza niż data urodzenia (%s)", date, born)
+		fmt.Fprintf(w, "data (%s) wcześniejsza niż data urodzenia (%s)\n", date, born)
 		return
 	}
 
-	buf := new(bytes.Buffer)
-	printBiorytm(buf, p.Born, p.Date, p.Drange)
-
-	err = textDisplayTmpl.Execute(w, buf.String())
-	if err != nil {
-		log.Printf("błąd wykonania template 'textDisplayTmpl': %s", err)
-		fmt.Fprintf(w, "błąd wykonania template 'textDisplayTmpl': %s\n", err)
+	switch p.look {
+	case "text":
+		displayText(w, p)
+	case "graph":
+		displayGraph(w, p)
+	default:
+		log.Printf("nie poprawna wartość parametru 'look': %s", p.look)
+		fmt.Fprintf(w, "nie poprawna wartość parametru 'look': %s\n", p.look)
 	}
 }
 
-// graphFormHandler wyświetla formatkę dla wprowadzania danych biorytmu
-// w postaci graficznej.
-func graphFormHandler(w http.ResponseWriter, r *http.Request) {
-	// ustaw początkowe dane dla formatki
-	p := params{
-		Born:   opts.born,
-		Date:   opts.date,
-		Drange: opts.drange,
-	}
+// displayText wyświetla biorytm w postaci tekstowej.
+func displayText(w http.ResponseWriter, p params) {
+	var buf bytes.Buffer
+	printBiorytm(&buf, p.born, p.date, p.days)
 
-	err := graphFormTmpl.Execute(w, p)
+	d := textData{}
+	d.Text = buf.String()
+
+	err := textTmpl.Execute(w, d)
 	if err != nil {
-		log.Printf("błąd wykonania template 'graphFormTmpl': %s", err)
-		fmt.Fprintf(w, "błąd wykonania template 'graphFormTmpl': %s\n", err)
+		log.Printf("błąd wykonania template 'textTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'textTmpl': %s\n", err)
 	}
 }
 
-// graphDisplayHandler wyświetla biorytm w postaci graficznej.
-func graphDisplayHandler(w http.ResponseWriter, r *http.Request) {
-	p, err := getTextFormData(r)
-	if err != nil {
-		log.Println(err)
-		fmt.Fprintln(w, err)
-		return
-	}
-
+// displayGraph wyświetla biorytm w postaci graficznej.
+func displayGraph(w http.ResponseWriter, p params) {
 	img := biorytmImage()
-	p.ImageString, err = encodeImage(img)
+
+	var err error
+	d := graphData{}
+	d.Born = p.born.Format(dateFmt)
+	d.Date = p.date.Format(dateFmt)
+	d.Image, err = encodeImage(img)
 	if err != nil {
 		log.Println(err)
 		fmt.Fprintln(w, err)
 		return
 	}
 
-	err = graphDisplayTmpl.Execute(w, p)
+	err = graphTmpl.Execute(w, d)
 	if err != nil {
-		log.Printf("błąd wykonania template 'graphDisplayTmpl': %s", err)
-		fmt.Fprintf(w, "błąd wykonania template 'graphDisplayTmpl': %s\n", err)
+		log.Printf("błąd wykonania template 'graphTmpl': %s", err)
+		fmt.Fprintf(w, "błąd wykonania template 'graphTmpl': %s\n", err)
 	}
 }
 
@@ -229,9 +202,10 @@ func biorytmImage() image.Image {
 	return img
 }
 
+// encodeImage koduje img w base64.
 func encodeImage(img image.Image) (string, error) {
-	buf := new(bytes.Buffer)
-	b64 := base64.NewEncoder(base64.StdEncoding, buf)
+	var buf bytes.Buffer
+	b64 := base64.NewEncoder(base64.StdEncoding, &buf)
 
 	err := png.Encode(b64, img)
 	if err != nil {
@@ -243,8 +217,8 @@ func encodeImage(img image.Image) (string, error) {
 	return s, nil
 }
 
-// getTextFormData pobiera z requestu i parsuje parametry biorytmu.
-func getTextFormData(r *http.Request) (params, error) {
+// getParams pobiera i parsuje parametry biorytmu zawarte w r.
+func getParams(r *http.Request) (params, error) {
 	p := params{}
 
 	err := r.ParseForm()
@@ -259,7 +233,7 @@ func getTextFormData(r *http.Request) (params, error) {
 		return p, errors.New("brak parametru 'born' (data urodzenia)")
 	}
 
-	p.Born, err = time.Parse(dateFmt, bornPar[0])
+	p.born, err = time.Parse(dateFmt, bornPar[0])
 	if err != nil {
 		return p, fmt.Errorf("błędna data urodzenia: %s", err)
 	}
@@ -271,19 +245,19 @@ func getTextFormData(r *http.Request) (params, error) {
 		return p, errors.New("brak parametru 'date' (data aktualna)")
 	}
 
-	p.Date, err = time.Parse(dateFmt, datePar[0])
+	p.date, err = time.Parse(dateFmt, datePar[0])
 	if err != nil {
 		return p, fmt.Errorf("błędna data aktualna: %s", err)
 	}
 
 	// pobierz parametr range
 
-	rangePar, ok := r.Form["range"]
+	daysPar, ok := r.Form["days"]
 	if !ok {
-		return p, errors.New("brak parametru 'range' (liczba dni biorytmu)")
+		return p, errors.New("brak parametru 'days' (liczba dni biorytmu)")
 	}
 
-	n, err := strconv.Atoi(rangePar[0])
+	n, err := strconv.Atoi(daysPar[0])
 	if err != nil {
 		return p, fmt.Errorf("błędny zakres dni: %s", err)
 	}
@@ -292,7 +266,19 @@ func getTextFormData(r *http.Request) (params, error) {
 	if n > maxRange {
 		return p, fmt.Errorf("za duża wartość zakresu (max: %d): %d", maxRange, n)
 	}
-	p.Drange = n
+	p.days = n
+
+	// pobierz parametr look
+
+	lookPar, ok := r.Form["look"]
+	if !ok {
+		return p, errors.New("brak parametru 'look' (sposób prezentacji)")
+	}
+
+	p.look = lookPar[0]
+	if !(p.look == "text" || p.look == "graph") {
+		return p, fmt.Errorf("błędna wartość parametru 'look': %s", p.look)
+	}
 
 	return p, nil
 }
