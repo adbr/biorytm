@@ -259,12 +259,12 @@ func getParams(r *http.Request) (params, error) {
 
 	n, err := strconv.Atoi(daysPar[0])
 	if err != nil {
-		return p, fmt.Errorf("błędny zakres dni: %s", err)
+		return p, fmt.Errorf("błędna liczba dni: %s", err)
 	}
 
 	const maxDays = 1000
 	if n > maxDays {
-		return p, fmt.Errorf("za duża wartość zakresu (max: %d): %d", maxDays, n)
+		return p, fmt.Errorf("za duża wartość liczby dni (max: %d): %d", maxDays, n)
 	}
 	p.days = n
 

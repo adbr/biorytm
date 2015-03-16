@@ -27,7 +27,7 @@ const formHTML = `
 				<td><input type="text" name="date" value="{{ .Date }}"></td>
 			</tr>
 			<tr>
-				<td style="text-align:right">ilość dni:</td>
+				<td style="text-align:right">liczba dni:</td>
 				<td><input type="text" name="days" value="{{ .Days }}"></td>
 			</tr>
 			<tr>
@@ -54,7 +54,7 @@ var formTmpl = template.New("form")
 type formData struct {
 	Born string // data urodzenia yyyy-mm-dd
 	Date string // data biorytmu yyyy-mm-dd
-	Days int    // zakres dni biorytmu
+	Days int    // liczba dni biorytmu
 }
 
 // textHTML definiuje template strony wyświetlającej biorytm w postaci
