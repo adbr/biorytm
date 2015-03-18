@@ -70,8 +70,17 @@ const textHTML = `
 	-->
 </head>
 <body>
+	<h2>
+	Biorytm
+	</h2>
+
 	<p>
 	<pre>{{ .Text }}</pre>
+	</p>
+
+	<p>
+	F: biorytm fizyczny, P: psychiczny, I: intelektualny<br>
+	Z: dzień zerowy, M: maksimum, K: dzień krytyczny, m: minimum<br>
 	</p>
 </body>
 </html>

@@ -10,38 +10,52 @@ import (
 )
 
 const (
-	zeroMark  = "Z" // zaznacza dzień zerowy biorytmu
-	maxMark   = "M" // zaznacza dzień maksymalny lub minimalny
+	zeroMark  = "Z" // dzień zerowy biorytmu
+	critMark  = "K" // dzień krytyczny
+	maxMark   = "M" // dzień maksymalny
+	minMark   = "m" // dzień minimalny
 	dateMark  = "*" // aktualna data
-	emptyMark = " " // dla zwykłego dnia
+	emptyMark = " " // zwykły dzień
 )
 
 // marks zwraca znaczniki jeśli dzień biorytmu jest wyróżniony, czyli
 // jeśli jest dniem zerowym, lub dniem maksymum lub minimum biorytmu.
 func marks(f, p, i int) (fmark, pmark, imark string) {
 	switch f {
-	case 0, 11, 12:
+	case 0:
 		fmark = zeroMark
-	case 6, 17:
+	case 6:
 		fmark = maxMark
+	case 11, 12:
+		fmark = critMark
+	case 17:
+		fmark = minMark
 	default:
 		fmark = emptyMark
 	}
 
 	switch p {
-	case 0, 14:
+	case 0:
 		pmark = zeroMark
-	case 7, 21:
+	case 7:
 		pmark = maxMark
+	case 14:
+		pmark = critMark
+	case 21:
+		pmark = minMark
 	default:
 		pmark = emptyMark
 	}
 
 	switch i {
-	case 0, 16, 17:
+	case 0:
 		imark = zeroMark
-	case 8, 25:
+	case 8:
 		imark = maxMark
+	case 16, 17:
+		imark = critMark
+	case 25:
+		imark = minMark
 	default:
 		imark = emptyMark
 	}
@@ -51,9 +65,11 @@ func marks(f, p, i int) (fmark, pmark, imark string) {
 
 // printBiorytm drukuje nd dni biorytmu na w.
 func printBiorytm(w io.Writer, born, date time.Time, nd int) {
-	fmt.Fprintf(w, "data urodzenia: %s\n", born.Format(dateFmt))
-	fmt.Fprintf(w, "data docelowa:  %s\n", date.Format(dateFmt))
-	fmt.Fprintf(w, "liczba dni:     %d\n", ndays(born, date))
+	fmt.Fprintf(w, "Data urodzenia: %s\n", born.Format(dateFmt))
+	fmt.Fprintf(w, "Data biorytmu:  %s\n", date.Format(dateFmt))
+	fmt.Fprintf(w, "Liczba dni:     %d\n", ndays(born, date))
+	fmt.Fprintln(w)
+	fmt.Fprintf(w, "%-13s%-19s%-19s%-19s\n", "Data", "Fizyczny", "Psychiczny", "Intelektualny")
 
 	const day = 24 * time.Hour
 
