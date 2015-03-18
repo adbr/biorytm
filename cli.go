@@ -57,11 +57,11 @@ func printBiorytm(w io.Writer, born, date time.Time, nd int) {
 
 	const day = 24 * time.Hour
 
-	d1 := date.Add(-time.Duration(nd/2) * day) // data początku zakresu
+	d1 := date.Add(-time.Duration((nd-1)/2) * day) // data początku zakresu
 	if d1.Before(born) {
 		d1 = born
 	}
-	d2 := d1.Add(time.Duration(nd) * day) // data końca zakresu
+	d2 := d1.Add(time.Duration(nd-1) * day) // data końca zakresu
 
 	for {
 		n := ndays(born, d1)
@@ -118,6 +118,11 @@ func biorytmCli() {
 
 	if date.Before(born) {
 		fmt.Fprintln(os.Stderr, "data biorytmu wcześniejsza niż data urodzenia")
+		usage()
+	}
+
+	if *daysFlag <= 0 {
+		fmt.Fprintf(os.Stderr, "liczba dni musi być większa od 0, jest: %d\n", *daysFlag)
 		usage()
 	}
 

@@ -266,6 +266,11 @@ func getParams(r *http.Request) (params, error) {
 	if n > maxDays {
 		return p, fmt.Errorf("za duża wartość liczby dni (max: %d): %d", maxDays, n)
 	}
+
+	if n <= 0 {
+		return p, fmt.Errorf("liczba dni musi być większa od 0, jest: %d", n)
+	}
+
 	p.days = n
 
 	// pobierz parametr look
