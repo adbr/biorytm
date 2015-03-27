@@ -8,13 +8,17 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	"image/color"
+	_ "image/color"
 	"image/png"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"code.google.com/p/plotinum/plot"
+	"code.google.com/p/plotinum/plotter"
+	"code.google.com/p/plotinum/vg/vgimg"
 )
 
 // opts zawiera wartości flag programu.
@@ -186,20 +190,38 @@ func displayGraph(w http.ResponseWriter, p params) {
 
 // biorytmImage zwraca obrazek z wykresem biorytmu.
 func biorytmImage() image.Image {
-	r := image.Rect(0, 0, 800, 600)
-	img := image.NewRGBA(r)
+	r := image.Rect(0, 0, 800, 400) // rectangle
+	img := image.NewRGBA(r)         // image
+	c := vgimg.NewImage(img)        // canvas
+	da := plot.MakeDrawArea(c)      // drawarea
 
-	back := color.RGBA{0, 50, 128, 128} // background color
-
-	// ustaw kolor tła
-	bounds := img.Bounds()
-	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
-		for x := bounds.Min.X; x < bounds.Max.X; x++ {
-			img.Set(x, y, back)
-		}
+	p, err := plot.New()
+	if err != nil {
+		panic(err)
 	}
 
+	data := makeData()
+	pl, err := plotter.NewLine(data)
+	if err != nil {
+		panic(err)
+	}
+
+	gr := plotter.NewGrid()
+
+	p.Add(pl, gr)
+	p.Draw(da)
+
 	return img
+}
+
+func makeData() plotter.XYs {
+	const num = 10
+	xys := make(plotter.XYs, num)
+	for i := 0; i < num; i++ {
+		xys[i].X = float64(i)
+		xys[i].Y = float64(i * i)
+	}
+	return xys
 }
 
 // encodeImage koduje img w base64.
@@ -264,7 +286,7 @@ func getParams(r *http.Request) (params, error) {
 
 	const maxDays = 1000
 	if n > maxDays {
-		return p, fmt.Errorf("za duża wartość liczby dni (max: %d): %d", maxDays, n)
+		return p, fmt.Errorf("za duża liczba dni (max: %d): %d", maxDays, n)
 	}
 
 	if n <= 0 {
