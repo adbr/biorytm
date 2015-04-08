@@ -8,13 +8,16 @@ import (
 	"errors"
 	"fmt"
 	"image"
-	_ "image/color"
+	"image/color"
 	"image/png"
 	"log"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"biorytm/cycle"
 
 	"code.google.com/p/plotinum/plot"
 	"code.google.com/p/plotinum/plotter"
@@ -168,7 +171,7 @@ func displayText(w http.ResponseWriter, p params) {
 
 // displayGraph wyświetla biorytm w postaci graficznej.
 func displayGraph(w http.ResponseWriter, p params) {
-	img := biorytmImage()
+	img := biorytmImage(p)
 
 	var err error
 	d := graphData{}
@@ -189,7 +192,7 @@ func displayGraph(w http.ResponseWriter, p params) {
 }
 
 // biorytmImage zwraca obrazek z wykresem biorytmu.
-func biorytmImage() image.Image {
+func biorytmImage(par params) image.Image {
 	r := image.Rect(0, 0, 800, 400) // rectangle
 	img := image.NewRGBA(r)         // image
 	c := vgimg.NewImage(img)        // canvas
@@ -199,29 +202,113 @@ func biorytmImage() image.Image {
 	if err != nil {
 		panic(err)
 	}
+	p.Title.Text = "Biorytm"
+	p.X.Label.Text = "Data biorytmu"
+	p.Y.Label.Text = "Wartość biorytmu"
 
-	data := makeData()
-	pl, err := plotter.NewLine(data)
+	data := biorytmData(cycle.F, par.born, par.date, par.days)
+	plf, scf, err := plotter.NewLinePoints(data)
 	if err != nil {
 		panic(err)
 	}
+	plf.Color = color.RGBA{255, 0, 0, 255}
 
-	gr := plotter.NewGrid()
+	data = biorytmData(cycle.P, par.born, par.date, par.days)
+	plp, scp, err := plotter.NewLinePoints(data)
+	if err != nil {
+		panic(err)
+	}
+	plp.Color = color.RGBA{0, 255, 0, 255}
 
-	p.Add(pl, gr)
+	data = biorytmData(cycle.I, par.born, par.date, par.days)
+	pli, sci, err := plotter.NewLinePoints(data)
+	if err != nil {
+		panic(err)
+	}
+	pli.Color = color.RGBA{0, 0, 255, 255}
+
+	d := par.days / 2
+	gr := NewGrid(float64(d), 0.0)
+
+	p.Add(plf, plp, pli, scf, scp, sci, gr)
+	p.Y.Min = -1.0
+	p.Y.Max = 1.0
+	p.X.Tick.Marker = plot.ConstantTicks(xticks(par))
+	p.Y.Tick.Marker = yticks
+	p.Legend.Add("Fizyczny", plf)
+	p.Legend.Add("Psychiczny", plp)
+	p.Legend.Add("Intelektualny", pli)
+	//p.Legend.XOffs = -30.0
+	p.Legend.YOffs = 5.0
+	p.Legend.Left = true
 	p.Draw(da)
 
 	return img
 }
 
-func makeData() plotter.XYs {
-	const num = 10
-	xys := make(plotter.XYs, num)
-	for i := 0; i < num; i++ {
+func biorytmData(p cycle.Period, born, date time.Time, days int) plotter.XYs {
+	a := cycle.ValuesCenterDate(p, born, date, days)
+	xys := make(plotter.XYs, len(a))
+	for i, v := range a {
 		xys[i].X = float64(i)
-		xys[i].Y = float64(i * i)
+		xys[i].Y = v.Val
 	}
 	return xys
+}
+
+func round(val float64, roundOn float64, places int) (newVal float64) {
+	var round float64
+	pow := math.Pow(10, float64(places))
+	digit := pow * val
+	_, div := math.Modf(digit)
+	_div := math.Copysign(div, val)
+	_roundOn := math.Copysign(roundOn, val)
+	if _div >= _roundOn {
+		round = math.Ceil(digit)
+	} else {
+		round = math.Floor(digit)
+	}
+	newVal = round / pow
+	return
+}
+
+func xticks(par params) []plot.Tick {
+	const labels = 6 // liczba etykiet (dat) na osi x
+	step := par.days / labels
+	if step < 1 {
+		step = 1
+	}
+	var ticks []plot.Tick
+	a := cycle.ValuesCenterDate(cycle.F, par.born, par.date, par.days)
+	for i, p := range a {
+		l := ""
+		if i%step == 0 {
+			l = p.Day.Format(dateFmt)
+		}
+		t := plot.Tick{
+			Value: float64(i),
+			Label: l,
+		}
+		ticks = append(ticks, t)
+	}
+	return ticks
+}
+
+func yticks(min, max float64) []plot.Tick {
+	var ticks []plot.Tick
+	for i := -10; i <= 10; i++ {
+		v := float64(i) / 10
+		l := ""
+		if i%2 == 0 {
+			l = fmt.Sprintf("%.1g", v)
+		}
+		t := plot.Tick{
+			Value: v,
+			Label: l,
+		}
+		ticks = append(ticks, t)
+	}
+	return ticks
 }
 
 // encodeImage koduje img w base64.

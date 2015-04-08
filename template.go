@@ -106,8 +106,6 @@ const graphHTML = `
 	Biorytm
 	</h2>
 
-	<p style="color:red">Not Yet Implemented</p>
-
 	<table>
 		<tr>
 			<td>Data urodzenia:</td>
