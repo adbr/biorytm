@@ -1,5 +1,45 @@
 {
 	"ImportPath": "biorytm",
 	"GoVersion": "go1.4.2",
-	"Deps": []
+	"Deps": [
+		{
+			"ImportPath": "bitbucket.org/zombiezen/gopdf/pdf",
+			"Comment": "go.weekly.2012-02-22-18",
+			"Rev": "1c63dc69751bc45441c2ce1f56b631c55294b4d5"
+		},
+		{
+			"ImportPath": "code.google.com/p/draw2d/draw2d",
+			"Comment": "release-20",
+			"Rev": "eaeb833648eee1b7c20e77ffc8180646c0395298"
+		},
+		{
+			"ImportPath": "code.google.com/p/freetype-go/freetype",
+			"Comment": "release-85",
+			"Rev": "46c3056cafbb4da11c4087a892c7d2bfa4224a8f"
+		},
+		{
+			"ImportPath": "code.google.com/p/plotinum/plot",
+			"Comment": "v1.0-124",
+			"Rev": "6632c5f3e77e476cc756c9f259a9564b3a60cb03"
+		},
+		{
+			"ImportPath": "code.google.com/p/plotinum/plotter",
+			"Comment": "v1.0-124",
+			"Rev": "6632c5f3e77e476cc756c9f259a9564b3a60cb03"
+		},
+		{
+			"ImportPath": "code.google.com/p/plotinum/vg",
+			"Comment": "v1.0-124",
+			"Rev": "6632c5f3e77e476cc756c9f259a9564b3a60cb03"
+		},
+		{
+			"ImportPath": "github.com/ajstarks/svgo",
+			"Comment": "go.weekly.2012-01-27-94-g47ca2bb",
+			"Rev": "47ca2bbf229311c9b8b96a9188ae37790250757b"
+		},
+		{
+			"ImportPath": "golang.org/x/image/tiff",
+			"Rev": "7eedc6044d40e985414482529aa12f09b63a072e"
+		}
+	]
 }
