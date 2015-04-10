@@ -1,6 +1,6 @@
 // 2015-02-17 Adam Bryt
 
-package main
+package cycle
 
 import (
 	"testing"
@@ -38,7 +38,7 @@ func TestJulianDayNumber(t *testing.T) {
 	}
 }
 
-func TestNdays(t *testing.T) {
+func TestNumDays(t *testing.T) {
 	//layout := "2006-01-02"
 
 	tests := []struct {
@@ -69,9 +69,9 @@ func TestNdays(t *testing.T) {
 	}
 
 	for i, test := range tests {
-		n := ndays(test.t1, test.t2)
+		n := NumDays(test.t1, test.t2)
 		if n != test.n {
-			t.Errorf("#%d: ndays(): oczekiwano: %d, jest: %d", i, test.n, n)
+			t.Errorf("#%d: NumDays(): oczekiwano: %d, jest: %d", i, test.n, n)
 		}
 	}
 }
