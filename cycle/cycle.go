@@ -55,8 +55,8 @@ func julianDayNumber(year, month, day int) int64 {
 
 // Point reprezentuje wartość biorytmu [-1..1] dla danego dnia.
 type Point struct {
-	Day time.Time // dzień
-	Val float64   // wartość biorytmu w zakresie [-1..1]
+	Date time.Time // data
+	Val  float64   // wartość biorytmu w zakresie [-1..1]
 }
 
 // ValuesCenterDate zwraca slice wartości biorytmu dla zakresu days dni, gdzie
@@ -79,8 +79,8 @@ func Values(p Period, born, date time.Time, days int) []Point {
 	for {
 		v := Val(p, born, d1)
 		pv := Point{
-			Day: d1,
-			Val: v,
+			Date: d1,
+			Val:  v,
 		}
 		a = append(a, pv)
 

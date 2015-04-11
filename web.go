@@ -266,7 +266,7 @@ func xticks(par params) []plot.Tick {
 	for i, p := range a {
 		l := ""
 		if i%step == 0 {
-			l = p.Day.Format(dateFmt)
+			l = p.Date.Format(dateFmt)
 		}
 		t := plot.Tick{
 			Value: float64(i),
