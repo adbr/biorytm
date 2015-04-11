@@ -16,7 +16,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"golang.org/x/image/tiff/lzw"
+	"biorytm/Godeps/_workspace/src/golang.org/x/image/tiff/lzw"
 )
 
 // A FormatError reports that the input is not a valid TIFF image.

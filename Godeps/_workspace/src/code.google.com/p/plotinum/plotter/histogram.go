@@ -10,7 +10,7 @@ import (
 	"image/color"
 	"math"
 
-	"code.google.com/p/plotinum/plot"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
 )
 
 // Histogram implements the Plotter interface,

@@ -2,6 +2,7 @@
 // +build !appengine
 
 package main
+
 //
 // A six-inch (15 cm) grid covering the wall.
 // Within each square, not straight lines from side to side, using
@@ -18,7 +19,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var canvas = svg.New(os.Stdout)

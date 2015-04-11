@@ -1,9 +1,9 @@
 package raster
 
 import (
+	"biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d/curve"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
 	"bufio"
-	"code.google.com/p/draw2d/draw2d/curve"
-	"code.google.com/p/freetype-go/freetype/raster"
 	"image"
 	"image/color"
 	"image/png"

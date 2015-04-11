@@ -8,7 +8,7 @@ import (
 	"image/png"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var ssDist = []float64{

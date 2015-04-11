@@ -4,8 +4,8 @@
 package main
 
 import (
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"fmt"
-	"github.com/ajstarks/svgo"
 	"os"
 )
 

@@ -7,9 +7,9 @@
 package vgeps
 
 import (
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"bufio"
 	"bytes"
-	"code.google.com/p/plotinum/vg"
 	"fmt"
 	"image/color"
 	"io"

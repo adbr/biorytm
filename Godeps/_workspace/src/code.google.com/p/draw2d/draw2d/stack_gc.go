@@ -4,7 +4,7 @@
 package draw2d
 
 import (
-	"code.google.com/p/freetype-go/freetype/truetype"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
 	"image"
 	"image/color"
 )

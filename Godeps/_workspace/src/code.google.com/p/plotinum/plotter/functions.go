@@ -5,7 +5,7 @@
 package plotter
 
 import (
-	"code.google.com/p/plotinum/plot"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
 )
 
 // Function implements the Plotter interface,

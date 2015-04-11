@@ -5,7 +5,7 @@
 package plot
 
 import (
-	"code.google.com/p/plotinum/vg"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 )
 
 // A Legend gives a description of the meaning of different

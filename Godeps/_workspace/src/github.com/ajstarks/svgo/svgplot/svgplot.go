@@ -10,7 +10,7 @@ import (
 	"math"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 // rawdata defines data as float64 x,y coordinates

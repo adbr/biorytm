@@ -1,14 +1,13 @@
-// fontcompare: compare two fonts 
+// fontcompare: compare two fonts
 // +build !appengine
 
 package main
-
 
 import (
 	"fmt"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var (

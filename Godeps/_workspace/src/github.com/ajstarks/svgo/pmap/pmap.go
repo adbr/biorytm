@@ -10,7 +10,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 // Pmap defines a porportional map

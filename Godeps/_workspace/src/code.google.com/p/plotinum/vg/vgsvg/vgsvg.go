@@ -7,11 +7,11 @@
 package vgsvg
 
 import (
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	svgo "biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"bufio"
 	"bytes"
-	"code.google.com/p/plotinum/vg"
 	"fmt"
-	svgo "github.com/ajstarks/svgo"
 	"image/color"
 	"io"
 	"math"

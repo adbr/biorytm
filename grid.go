@@ -8,8 +8,8 @@ package main
 import (
 	"image/color"
 
-	"code.google.com/p/plotinum/plot"
-	"code.google.com/p/plotinum/vg"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 )
 
 var (

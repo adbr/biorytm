@@ -2,10 +2,10 @@
 package main
 
 import (
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"github.com/ajstarks/svgo"
 	"io"
 	"math"
 	"os"
@@ -15,8 +15,8 @@ import (
 
 var (
 	width, height, iscale, fontsize, barheight, gutter, cornerRadius, labelimit int
-	bgcolor, barcolor, title, inbar, valformat                       string
-	showtitle, showdata, showgrid, showscale, endtitle, trace               bool
+	bgcolor, barcolor, title, inbar, valformat                                  string
+	showtitle, showdata, showgrid, showscale, endtitle, trace                   bool
 )
 
 const (
@@ -122,7 +122,7 @@ func drawbc(bg Barchart, canvas *svg.SVG) {
 	if len(title) > 0 {
 		bg.Title = title
 	}
-	labelimit = bg.Left/8
+	labelimit = bg.Left / 8
 	cr := cornerRadius
 	maxwidth := width - (bg.Left + bg.Right)
 	x := bg.Left
@@ -189,8 +189,7 @@ func drawbc(bg Barchart, canvas *svg.SVG) {
 				} else {
 					canvas.Roundrect(sx, y, int(dw), barheight, cr, cr, fmt.Sprintf("fill-opacity:%.2f", barop[ns]))
 				}
-				
-				
+
 				if (showdata || b.Showdata) && sd > 0 {
 					var valuestyle = "fill-opacity:1;font-style:italic;font-size:75%;text-anchor:middle;baseline-shift:-25%;"
 					var ditem string
@@ -405,7 +404,6 @@ func stackvalues(s string) []float64 {
 	return vals
 }
 
-
 // colorange evenly distributes opacity across a range of values
 func colorange(start, end float64, n int) []float64 {
 	v := make([]float64, n)
@@ -414,21 +412,20 @@ func colorange(start, end float64, n int) []float64 {
 	if n == 2 {
 		return v
 	}
-	incr := (end-start)/float64(n-1)
-	for i:=1; i < n-1; i++ {
+	incr := (end - start) / float64(n-1)
+	for i := 1; i < n-1; i++ {
 		v[i] = v[i-1] + incr
 	}
 	return v
 }
-
 
 func textlimit(s string, n int) string {
 	l := len(s)
 	if l <= n {
 		return s
 	}
-	
-	return s[0:n-3]+"..."
+
+	return s[0:n-3] + "..."
 }
 
 // init sets up the command flags

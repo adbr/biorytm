@@ -3,14 +3,13 @@
 
 package main
 
-
 import (
 	"flag"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 const defaultstyle = "fill:rgb(127,0,0)"

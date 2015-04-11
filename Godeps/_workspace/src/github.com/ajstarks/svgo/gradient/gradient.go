@@ -3,12 +3,11 @@
 
 package main
 
-
 import (
 	"os"
 	"strconv"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 func main() {

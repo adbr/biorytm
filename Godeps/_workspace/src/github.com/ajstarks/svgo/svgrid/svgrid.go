@@ -10,7 +10,7 @@ import (
 	"io"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 // SVG is a SVG document
@@ -59,7 +59,7 @@ func placepic(x, y int, filename string) (int, int) {
 	// read the width and height, including any units
 	// if there are errors use 10 as a default
 	nw, _ := fmt.Sscanf(s.Width, "%d%s", &width, &wunit)
-	if nw < 1  {
+	if nw < 1 {
 		width = 10
 	}
 	nh, _ := fmt.Sscanf(s.Height, "%d%s", &height, &hunit)

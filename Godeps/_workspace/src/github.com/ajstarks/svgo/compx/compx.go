@@ -4,10 +4,10 @@
 package main
 
 import (
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"github.com/ajstarks/svgo"
 	"io"
 	"math"
 	"os"

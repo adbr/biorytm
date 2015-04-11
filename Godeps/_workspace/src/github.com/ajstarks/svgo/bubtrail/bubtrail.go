@@ -3,7 +3,6 @@
 
 package main
 
-
 import (
 	"flag"
 	"fmt"
@@ -11,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var (

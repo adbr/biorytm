@@ -5,7 +5,7 @@
 package plot
 
 import (
-	"code.google.com/p/plotinum/vg"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"image/color"
 	"math"
 	"strings"

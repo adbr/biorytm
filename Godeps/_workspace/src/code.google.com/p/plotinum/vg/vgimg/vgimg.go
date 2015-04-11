@@ -17,9 +17,9 @@ import (
 	"image/png"
 	"io"
 
-	"code.google.com/p/draw2d/draw2d"
-	"code.google.com/p/plotinum/vg"
-	"golang.org/x/image/tiff"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"biorytm/Godeps/_workspace/src/golang.org/x/image/tiff"
 )
 
 // dpi is the number of dots per inch.

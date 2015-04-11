@@ -3,7 +3,6 @@
 
 package main
 
-
 import (
 	"encoding/xml"
 	"fmt"
@@ -11,7 +10,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 // FlickrResp defines the Flickr response

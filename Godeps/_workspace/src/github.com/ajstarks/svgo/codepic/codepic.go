@@ -3,7 +3,6 @@
 
 package main
 
-
 import (
 	"bufio"
 	"encoding/xml"
@@ -13,7 +12,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ajstarks/svgo"
+	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var (
