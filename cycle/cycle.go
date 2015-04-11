@@ -59,9 +59,9 @@ type Point struct {
 	Val float64   // wartość biorytmu w zakresie [-1..1]
 }
 
-// Values zwraca slice wartości biorytmu dla zakresu days dni, gdzie date
-// jest w środku zakresu dni.
-// Argument p jest długością cyklu biorytmu, a born to data urodzenia.
+// ValuesCenterDate zwraca slice wartości biorytmu dla zakresu days dni, gdzie
+// date jest w środku zakresu dni.  Argument p jest długością cyklu biorytmu, a
+// born to data urodzenia.
 func ValuesCenterDate(p Period, born, date time.Time, days int) []Point {
 	d1 := date.Add(-time.Duration(days/2) * day)
 	if d1.Before(born) {
