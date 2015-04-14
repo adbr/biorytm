@@ -53,16 +53,17 @@ func julianDayNumber(year, month, day int) int64 {
 	return int64(day) + (153*m+2)/5 + 365*y + y/4 - y/100 + y/400 - 32045
 }
 
-// Value reprezentuje wartość biorytmu [-1..1] dla danego dnia.
+// Value reprezentuje wartość biorytmu w danym dniu.
 type Value struct {
 	Date time.Time // data
+	Day  int       // dzień cyklu biorytmu
 	Val  float64   // wartość biorytmu w zakresie [-1..1]
 }
 
-// ValuesCenterDate zwraca slice wartości biorytmu dla zakresu days dni, gdzie
-// date jest w środku zakresu dni.  Argument p jest długością cyklu biorytmu, a
-// born to data urodzenia.
-func ValuesCenterDate(p Period, born, date time.Time, days int) []Value {
+// ValuesCenter zwraca slice wartości biorytmu dla zakresu days dni,
+// gdzie date jest w środku zakresu dni. Argument p jest długością
+// cyklu biorytmu, a born to data urodzenia.
+func ValuesCenter(p Period, born, date time.Time, days int) []Value {
 	d1 := date.Add(-time.Duration(days/2) * day)
 	if d1.Before(born) {
 		d1 = born
@@ -77,12 +78,12 @@ func Values(p Period, born, date time.Time, days int) []Value {
 	d2 := d1.Add(time.Duration(days) * day)
 	a := []Value{}
 	for {
-		v := Val(p, born, d1)
-		pv := Value{
+		v := Value{
 			Date: d1,
-			Val:  v,
+			Day:  Day(p, born, d1),
+			Val:  Val(p, born, d1),
 		}
-		a = append(a, pv)
+		a = append(a, v)
 
 		d1 = d1.Add(day)
 		if d1.After(d2) {

@@ -3,12 +3,14 @@
 package main
 
 import (
+	"biorytm/cycle"
 	"fmt"
 	"io"
 	"os"
 	"time"
 )
 
+// Oznaczenia wyróżnionych dni na wydruku tekstowym.
 const (
 	zeroMark  = "Z" // dzień zerowy biorytmu
 	critMark  = "K" // dzień krytyczny
@@ -18,8 +20,7 @@ const (
 	emptyMark = " " // zwykły dzień
 )
 
-// marks zwraca znaczniki jeśli dzień biorytmu jest wyróżniony, czyli
-// jeśli jest dniem zerowym, lub dniem maksymum lub minimum biorytmu.
+// marks zwraca znaczniki jeśli dzień biorytmu jest wyróżniony.
 func marks(f, p, i int) (fmark, pmark, imark string) {
 	switch f {
 	case 0:
@@ -63,47 +64,37 @@ func marks(f, p, i int) (fmark, pmark, imark string) {
 	return
 }
 
-// printBiorytm drukuje nd dni biorytmu na w.
-func printBiorytm(w io.Writer, born, date time.Time, nd int) {
+// printBiorytm drukuje na w biorytm dla days dni.
+func printBiorytm(w io.Writer, born, date time.Time, days int) {
 	fmt.Fprintf(w, "Data urodzenia: %s\n", born.Format(dateFmt))
 	fmt.Fprintf(w, "Data biorytmu:  %s\n", date.Format(dateFmt))
-	fmt.Fprintf(w, "Liczba dni:     %d\n", ndays(born, date))
+	fmt.Fprintf(w, "Liczba dni:     %d\n", cycle.NumDays(born, date))
 	fmt.Fprintln(w)
 	fmt.Fprintf(w, "%-13s%-19s%-19s%-19s\n", "Data", "Fizyczny", "Psychiczny", "Intelektualny")
 
-	const day = 24 * time.Hour
+	fvs := cycle.ValuesCenter(cycle.F, born, date, days)
+	pvs := cycle.ValuesCenter(cycle.P, born, date, days)
+	ivs := cycle.ValuesCenter(cycle.I, born, date, days)
 
-	d1 := date.Add(-time.Duration((nd-1)/2) * day) // data początku zakresu
-	if d1.Before(born) {
-		d1 = born
-	}
-	d2 := d1.Add(time.Duration(nd-1) * day) // data końca zakresu
-
-	for {
-		n := ndays(born, d1)
-		f, p, i := bioDay(n)
-		fv, pv, iv := bioVal(n)
+	for i := 0; i < len(fvs); i++ {
+		f := fvs[i]
+		p := pvs[i]
+		i := ivs[i]
 
 		dmark := emptyMark
-		if d1 == date {
+		if f.Date == date {
 			dmark = dateMark
 		}
-		fmark, pmark, imark := marks(f, p, i)
+		fmark, pmark, imark := marks(f.Day, p.Day, i.Day)
 
-		fmt.Fprintf(w, "%s%s ", d1.Format(dateFmt), dmark)
-		fmt.Fprintf(w, " F: %+5.2f (%2d/%d)%s ", fv, f, fPeriod, fmark)
-		fmt.Fprintf(w, " P: %+5.2f (%2d/%d)%s ", pv, p, pPeriod, pmark)
-		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s \n", iv, i, iPeriod, imark)
-
-		d1 = d1.Add(day)
-		if d1.After(d2) {
-			break
-		}
+		fmt.Fprintf(w, "%s%s ", f.Date.Format(dateFmt), dmark)
+		fmt.Fprintf(w, " F: %+5.2f (%2d/%d)%s ", f.Val, f.Day, cycle.F, fmark)
+		fmt.Fprintf(w, " P: %+5.2f (%2d/%d)%s ", p.Val, p.Day, cycle.P, pmark)
+		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s \n", i.Val, i.Day, cycle.I, imark)
 	}
 }
 
-// biorytmCli drukuje biorytm na stdout.
-func biorytmCli() {
+func cliMain() {
 	var (
 		born time.Time // data urodzenia
 		date time.Time // data docelowa biorytmu

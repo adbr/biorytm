@@ -37,9 +37,9 @@ func main() {
 	flag.Parse()
 
 	if *httpFlag != "" {
-		biorytmWeb()
+		webMain()
 		return
 	}
 
-	biorytmCli()
+	cliMain()
 }

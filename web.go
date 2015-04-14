@@ -38,7 +38,7 @@ type params struct {
 	look string    // jak prezentować biorytm [text|graph]
 }
 
-func biorytmWeb() {
+func webMain() {
 	initTemplates()
 	parseOpts()
 
@@ -246,7 +246,7 @@ func biorytmImage(par params) image.Image {
 }
 
 func biorytmData(p cycle.Period, born, date time.Time, days int) plotter.XYs {
-	a := cycle.ValuesCenterDate(p, born, date, days)
+	a := cycle.ValuesCenter(p, born, date, days)
 	xys := make(plotter.XYs, len(a))
 	for i, v := range a {
 		xys[i].X = float64(i)
@@ -262,7 +262,7 @@ func xticks(par params) []plot.Tick {
 		step = 1
 	}
 	var ticks []plot.Tick
-	a := cycle.ValuesCenterDate(cycle.F, par.born, par.date, par.days)
+	a := cycle.ValuesCenter(cycle.F, par.born, par.date, par.days)
 	for i, p := range a {
 		l := ""
 		if i%step == 0 {
