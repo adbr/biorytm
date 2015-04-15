@@ -38,6 +38,9 @@ const formHTML = `
 				</td>
 			</tr>
 			<tr>
+				<td colspan="2"> <hr> </td>
+			</tr>
+			<tr>
 				<td></td>
 				<td style="text-align:right"><input type="submit" value="OK"></td>
 			</tr>
