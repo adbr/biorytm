@@ -9,6 +9,4 @@ flagi:
         -date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
         -http="": adres usługi HTTP (np. ':5050')
         -days=15: zakres dni biorytmu
-
-Katalog 'fonts' powinien być w katalogu aktualnym albo powinna być ustawiona
-zmienna środowiskowa $VGFONTPATH
+	-fonts="": katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)

@@ -20,6 +20,7 @@ import (
 
 	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
 	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plotter"
+	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
 )
 
@@ -100,6 +101,10 @@ func parseOpts() {
 
 	// days
 	opts.days = *daysFlag
+
+	if *fontsFlag != "" {
+		vg.FontDirs = append(vg.FontDirs, *fontsFlag)
+	}
 }
 
 func mainHandler(w http.ResponseWriter, r *http.Request) {

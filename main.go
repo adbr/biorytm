@@ -16,15 +16,17 @@ flagi:
 	-born="": data urodzenia w formacie yyyy-mm-dd
 	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
 	-http="": adres usługi HTTP (np. ':5050')
-	-days=15: liczba dni biorytmu`
+	-days=15: liczba dni biorytmu
+	-fonts="": katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)`
 
 const dateFmt = "2006-01-02"
 
 var (
-	bornFlag = flag.String("born", "", "data urodzenia (yyyy-mm-dd)")
-	dateFlag = flag.String("date", "", "data biorytmu (yyyy-mm-dd)")
-	httpFlag = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
-	daysFlag = flag.Int("days", 15, "liczba dni biorytmu")
+	bornFlag  = flag.String("born", "", "data urodzenia (yyyy-mm-dd)")
+	dateFlag  = flag.String("date", "", "data biorytmu (yyyy-mm-dd)")
+	httpFlag  = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
+	daysFlag  = flag.Int("days", 15, "liczba dni biorytmu")
+	fontsFlag = flag.String("fonts", "", "katalog z fontami")
 )
 
 func usage() {
