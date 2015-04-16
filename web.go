@@ -175,9 +175,13 @@ func displayText(w http.ResponseWriter, p params) {
 
 // displayGraph wyświetla biorytm w postaci graficznej.
 func displayGraph(w http.ResponseWriter, p params) {
-	img := biorytmImage(p)
+	img, err := biorytmImage(p)
+	if err != nil {
+		log.Println(err)
+		fmt.Fprintln(w, err)
+		return
+	}
 
-	var err error
 	d := graphData{}
 	d.Born = p.born.Format(dateFmt)
 	d.Date = p.date.Format(dateFmt)
@@ -196,7 +200,7 @@ func displayGraph(w http.ResponseWriter, p params) {
 }
 
 // biorytmImage zwraca obrazek z wykresem biorytmu.
-func biorytmImage(par params) image.Image {
+func biorytmImage(par params) (image.Image, error) {
 	r := image.Rect(0, 0, 800, 400) // rectangle
 	img := image.NewRGBA(r)         // image
 	c := vgimg.NewImage(img)        // canvas
@@ -204,7 +208,7 @@ func biorytmImage(par params) image.Image {
 
 	p, err := plot.New()
 	if err != nil {
-		panic(err)
+		return img, err
 	}
 	p.Title.Text = "Biorytm"
 	p.X.Label.Text = "Data biorytmu"
@@ -213,21 +217,21 @@ func biorytmImage(par params) image.Image {
 	data := biorytmData(cycle.F, par.born, par.date, par.days)
 	plf, scf, err := plotter.NewLinePoints(data)
 	if err != nil {
-		panic(err)
+		return img, err
 	}
 	plf.Color = color.RGBA{255, 0, 0, 255}
 
 	data = biorytmData(cycle.P, par.born, par.date, par.days)
 	plp, scp, err := plotter.NewLinePoints(data)
 	if err != nil {
-		panic(err)
+		return img, err
 	}
 	plp.Color = color.RGBA{0, 255, 0, 255}
 
 	data = biorytmData(cycle.I, par.born, par.date, par.days)
 	pli, sci, err := plotter.NewLinePoints(data)
 	if err != nil {
-		panic(err)
+		return img, err
 	}
 	pli.Color = color.RGBA{0, 0, 255, 255}
 
@@ -247,7 +251,7 @@ func biorytmImage(par params) image.Image {
 	p.Legend.Left = true
 	p.Draw(da)
 
-	return img
+	return img, nil
 }
 
 func biorytmData(p cycle.Period, born, date time.Time, days int) plotter.XYs {
