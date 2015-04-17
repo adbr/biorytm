@@ -20,48 +20,57 @@ const (
 	emptyMark = " " // zwykły dzień
 )
 
-// marks zwraca znaczniki jeśli dzień biorytmu jest wyróżniony.
-func marks(f, p, i int) (fmark, pmark, imark string) {
-	switch f {
-	case 0:
-		fmark = zeroMark
-	case 6:
-		fmark = maxMark
-	case 11, 12:
-		fmark = critMark
-	case 17:
-		fmark = minMark
-	default:
-		fmark = emptyMark
-	}
+// fmarks zawiera znaczniki wyróżnionych dni cyklu fizycznego.
+var fmarks = map[int]string{
+	0:  zeroMark,
+	6:  maxMark,
+	11: critMark,
+	12: critMark,
+	17: minMark,
+}
 
-	switch p {
-	case 0:
-		pmark = zeroMark
-	case 7:
-		pmark = maxMark
-	case 14:
-		pmark = critMark
-	case 21:
-		pmark = minMark
-	default:
-		pmark = emptyMark
+// fmark zwraca znacznik dla dnia day cyklu fizycznego.
+func fmark(day int) string {
+	s, ok := fmarks[day]
+	if ok {
+		return s
 	}
+	return emptyMark
+}
 
-	switch i {
-	case 0:
-		imark = zeroMark
-	case 8:
-		imark = maxMark
-	case 16, 17:
-		imark = critMark
-	case 25:
-		imark = minMark
-	default:
-		imark = emptyMark
+// pmarks zawiera znaczniki wyróżnionych dni cyklu psychicznego.
+var pmarks = map[int]string{
+	0:  zeroMark,
+	7:  maxMark,
+	14: critMark,
+	21: minMark,
+}
+
+// pmark zwraca znacznik dla dnia day cyklu psychicznego.
+func pmark(day int) string {
+	s, ok := pmarks[day]
+	if ok {
+		return s
 	}
+	return emptyMark
+}
 
-	return
+// imarks zawiera znaczniki wyróżnionych dni cyklu intelektualnego.
+var imarks = map[int]string{
+	0:  zeroMark,
+	8:  maxMark,
+	16: critMark,
+	17: critMark,
+	25: minMark,
+}
+
+// imark zwraca znacznik dla dnia day cyklu intelektualnego.
+func imark(day int) string {
+	s, ok := imarks[day]
+	if ok {
+		return s
+	}
+	return emptyMark
 }
 
 // printBiorytm drukuje na w biorytm dla days dni.
@@ -81,16 +90,18 @@ func printBiorytm(w io.Writer, born, date time.Time, days int) {
 		p := pvs[i]
 		i := ivs[i]
 
-		dmark := emptyMark
+		dm := emptyMark
 		if f.Date == date {
-			dmark = dateMark
+			dm = dateMark
 		}
-		fmark, pmark, imark := marks(f.Day, p.Day, i.Day)
+		fm := fmark(f.Day)
+		pm := pmark(p.Day)
+		im := imark(i.Day)
 
-		fmt.Fprintf(w, "%s%s ", f.Date.Format(dateFmt), dmark)
-		fmt.Fprintf(w, " F: %+5.2f (%2d/%d)%s ", f.Val, f.Day, cycle.F, fmark)
-		fmt.Fprintf(w, " P: %+5.2f (%2d/%d)%s ", p.Val, p.Day, cycle.P, pmark)
-		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s \n", i.Val, i.Day, cycle.I, imark)
+		fmt.Fprintf(w, "%s%s ", f.Date.Format(dateFmt), dm)
+		fmt.Fprintf(w, " F: %+5.2f (%2d/%d)%s ", f.Val, f.Day, cycle.F, fm)
+		fmt.Fprintf(w, " P: %+5.2f (%2d/%d)%s ", p.Val, p.Day, cycle.P, pm)
+		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s \n", i.Val, i.Day, cycle.I, im)
 	}
 }
 
