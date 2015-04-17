@@ -24,14 +24,14 @@ import (
 	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
 )
 
-// opts zawiera wartości flag programu.
+// opts zawiera sparsowane wartości flag programu.
 var opts struct {
 	born time.Time // data urodzenia
 	date time.Time // data biorytmu
 	days int       // liczba dni biorytmu
 }
 
-// params zawiera parametry biorytmu przekazane w request.
+// params zawiera sparsowane parametry przekazane w request.
 type params struct {
 	born time.Time // data urodzenia
 	date time.Time // data biorytmu
@@ -75,7 +75,6 @@ func initTemplates() {
 
 // parseOpts parsuje wartości flag programu i ustawia zmienną opts.
 func parseOpts() {
-	// born
 	if *bornFlag != "" {
 		b, err := time.Parse(dateFmt, *bornFlag)
 		if err != nil {
@@ -85,7 +84,6 @@ func parseOpts() {
 		opts.born = b
 	}
 
-	// date
 	if *dateFlag != "" {
 		d, err := time.Parse(dateFmt, *dateFlag)
 		if err != nil {
@@ -99,7 +97,6 @@ func parseOpts() {
 		opts.date = d
 	}
 
-	// days
 	opts.days = *daysFlag
 
 	if *fontsFlag != "" {
@@ -113,7 +110,6 @@ func mainHandler(w http.ResponseWriter, r *http.Request) {
 
 // formHandler wyświetla formatkę dla wprowadzania danych biorytmu.
 func formHandler(w http.ResponseWriter, r *http.Request) {
-	// ustaw początkowe dane dla formatki
 	d := formData{}
 	if !opts.born.IsZero() {
 		d.Born = opts.born.Format(dateFmt)
@@ -239,16 +235,18 @@ func biorytmImage(par params) (image.Image, error) {
 	gr := NewGrid(float64(d), 0.0)
 
 	p.Add(plf, plp, pli, scf, scp, sci, gr)
+
 	p.Y.Min = -1.0
 	p.Y.Max = 1.0
 	p.X.Tick.Marker = plot.ConstantTicks(xticks(par))
 	p.Y.Tick.Marker = yticks
+
 	p.Legend.Add("Fizyczny", plf)
 	p.Legend.Add("Psychiczny", plp)
 	p.Legend.Add("Intelektualny", pli)
-	//p.Legend.XOffs = -30.0
 	p.Legend.YOffs = 5.0
 	p.Legend.Left = true
+
 	p.Draw(da)
 
 	return img, nil

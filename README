@@ -10,3 +10,5 @@ flagi:
         -http="": adres usługi HTTP (np. ':5050')
         -days=15: zakres dni biorytmu
 	-fonts="": katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)
+
+Działający program: https://biorytm.herokuapp.com

@@ -1,6 +1,7 @@
 // 2015-04-03 Adam Bryt
+//
 // Modyfikacja pliku: code.google.com/p/plotinum/plotter/grid.go
-// Dodanie rysowania pionowych linii dla minor ticks. Dodanie rysowania
+// Zostało dodane rysowanie pionowych linii dla minor ticks i rysowanie
 // głównych (wyróżnionych) linii: jednej poniomej i jednej pionowej.
 
 package main
@@ -19,14 +20,14 @@ var (
 		Width: vg.Points(0.25),
 	}
 
+	// DefaultGridMainLineStyle is the default style for main lines.
 	DefaultGridMainLineStyle = plot.LineStyle{
 		Color: color.Gray{128},
 		Width: vg.Points(1.0),
 	}
 )
 
-// Grid implements the plot.Plotter interface, drawing
-// a set of grid lines at the major tick marks.
+// Grid implements the plot.Plotter interface, drawing a set of grid lines.
 type Grid struct {
 	vStyle     plot.LineStyle
 	hStyle     plot.LineStyle
@@ -36,8 +37,7 @@ type Grid struct {
 	hMainStyle plot.LineStyle
 }
 
-// NewGrid returns a new grid with both vertical and
-// horizontal lines using the default grid line style.
+// NewGrid returns a new grid.
 func NewGrid(v, h float64) *Grid {
 	return &Grid{
 		vStyle:     DefaultGridLineStyle,

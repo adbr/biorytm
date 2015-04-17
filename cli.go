@@ -3,11 +3,12 @@
 package main
 
 import (
-	"biorytm/cycle"
 	"fmt"
 	"io"
 	"os"
 	"time"
+
+	"biorytm/cycle"
 )
 
 // Oznaczenia wyróżnionych dni na wydruku tekstowym.
@@ -101,7 +102,8 @@ func printBiorytm(w io.Writer, born, date time.Time, days int) {
 		fmt.Fprintf(w, "%s%s ", f.Date.Format(dateFmt), dm)
 		fmt.Fprintf(w, " F: %+5.2f (%2d/%d)%s ", f.Val, f.Day, cycle.F, fm)
 		fmt.Fprintf(w, " P: %+5.2f (%2d/%d)%s ", p.Val, p.Day, cycle.P, pm)
-		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s \n", i.Val, i.Day, cycle.I, im)
+		fmt.Fprintf(w, " I: %+5.2f (%2d/%d)%s ", i.Val, i.Day, cycle.I, im)
+		fmt.Fprintln(w)
 	}
 }
 

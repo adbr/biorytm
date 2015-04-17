@@ -20,7 +20,7 @@ const (
 
 const day = 24 * time.Hour
 
-// Day zwraca wartość cyklu p [-1..1] w dniu date od daty urodzenia born.
+// Val zwraca wartość cyklu p [-1..1] w dniu date od daty urodzenia born.
 func Val(p Period, born, date time.Time) float64 {
 	d := Day(p, born, date)
 	return math.Sin(float64(d) * 2 * math.Pi / float64(p))
@@ -61,8 +61,8 @@ type Value struct {
 }
 
 // ValuesCenter zwraca slice wartości biorytmu dla zakresu days dni,
-// gdzie date jest w środku zakresu dni. Argument p jest długością
-// cyklu biorytmu, a born to data urodzenia.
+// gdzie date jest w środku zakresu. Argument p jest długością cyklu
+// biorytmu, a born to data urodzenia.
 func ValuesCenter(p Period, born, date time.Time, days int) []Value {
 	d1 := date.Add(-time.Duration(days/2) * day)
 	if d1.Before(born) {
