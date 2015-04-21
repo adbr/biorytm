@@ -23,13 +23,13 @@ Flagi:
 
 Program ma dwa tryby pracy.
 
-Jeśli nie podano opcji -http, biorytm jest drukowany na stdout. Opcja -days określa
-ile dni biorytmu wyświetlić, przy czym data podana w opcji -date, lub data aktualna,
-znajduje się w środku tego zakresu.
+Jeśli nie podano opcji -http, biorytm jest drukowany na stdout. Opcja -days
+określa ile dni biorytmu wyświetlić, przy czym data podana w opcji -date, lub
+data aktualna, znajduje się w środku tego zakresu.
 
-Jeśli podano opcję -http to program działa jako serwer HTTP. Parametry biorytmu
-można zmienić w formatce na stronie, a wyniki są prezentowane w postaci tekstowej
-lub w postaci wykresu.
+Jeśli podano opcję -http to program działa jako serwer HTTP.  Parametry
+biorytmu można zmienić w formatce na stronie, a wyniki są prezentowane w
+postaci tekstowej lub w postaci wykresu.
 
 Informacje na temat biorytmów można znaleźć np. na stronie
 http://en.wikipedia.org/wiki/Biorhythm
@@ -56,9 +56,9 @@ Uruchomienie w trybie serwera HTTP:
 
 	biorytm -http :5050
 
-Z tak uruchomionym serwerem można się połączyć przeglądarką WWW
-podając adres 'localhost:5050'. Następnie w formatce na stronie można
-wprowadzić parametry biorytmu i wybrać sposób prezentacji.
+Z tak uruchomionym serwerem można się połączyć przeglądarką WWW podając adres
+'localhost:5050'. Następnie w formatce na stronie można wprowadzić parametry
+biorytmu i wybrać sposób prezentacji.
 
 */
 package main
