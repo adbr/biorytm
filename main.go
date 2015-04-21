@@ -8,11 +8,11 @@ import (
 	"os"
 )
 
-const usageStr = `usage:
+const usageStr = `Sposób użycia:
 	biorytm [flagi] -born <data urodzenia>
 	biorytm [flagi] -http <host:port>
 
-flagi:
+Flagi:
 	-born="": data urodzenia w formacie yyyy-mm-dd
 	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
 	-http="": adres usługi HTTP (np. ':5050')
