@@ -1,6 +1,21 @@
-// 2015-04-20 Adam Bryt
+// 2015-04-21 Adam Bryt
 
-/*
+package main
+
+const usageStr = `Sposób użycia:
+	biorytm [flagi] -born <data urodzenia>
+	biorytm [flagi] -http <host:port>
+
+Flagi:
+	-born="": data urodzenia w formacie yyyy-mm-dd
+	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
+	-http="": adres usługi HTTP (np. ':5050')
+	-days=15: liczba dni biorytmu
+	-fonts="": katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)
+	-help=false: wyświetla help`
+
+// Wartość helpStr jest kopią dokumentacji z doc.go.
+const helpStr = `
 Program wyświetla biorytm dla podanego zakresu dni.
 
 Sposób użycia:
@@ -20,6 +35,8 @@ Flagi:
 		liczba dni biorytmu
 	-fonts=""
 		katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)
+	-help=false
+		wyświetla help
 
 Program ma dwa tryby pracy.
 
@@ -58,7 +75,4 @@ Uruchomienie w trybie serwera HTTP:
 
 Z tak uruchomionym serwerem można się połączyć przeglądarką WWW
 podając adres 'localhost:5050'. Następnie w formatce na stronie można
-wprowadzić parametry biorytmu i wybrać sposób prezentacji.
-
-*/
-package main
+wprowadzić parametry biorytmu i wybrać sposób prezentacji.`

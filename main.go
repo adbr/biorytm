@@ -8,17 +8,6 @@ import (
 	"os"
 )
 
-const usageStr = `Sposób użycia:
-	biorytm [flagi] -born <data urodzenia>
-	biorytm [flagi] -http <host:port>
-
-Flagi:
-	-born="": data urodzenia w formacie yyyy-mm-dd
-	-date="": data biorytmu w formacie yyyy-mm-dd (domyślnie: dzisiaj)
-	-http="": adres usługi HTTP (np. ':5050')
-	-days=15: liczba dni biorytmu
-	-fonts="": katalog z fontami (domyślnie ./fonts lub $VGFONTPATH)`
-
 const dateFmt = "2006-01-02"
 
 var (
@@ -27,6 +16,7 @@ var (
 	httpFlag  = flag.String("http", "", "adres usługi HTTP (np. ':5050')")
 	daysFlag  = flag.Int("days", 15, "liczba dni biorytmu")
 	fontsFlag = flag.String("fonts", "", "katalog z fontami")
+	helpFlag  = flag.Bool("help", false, "wyświetla help")
 )
 
 func usage() {
@@ -34,9 +24,18 @@ func usage() {
 	os.Exit(1)
 }
 
+func help() {
+	fmt.Fprintln(os.Stdout, helpStr)
+	os.Exit(0)
+}
+
 func main() {
 	flag.Usage = usage
 	flag.Parse()
+
+	if *helpFlag {
+		help()
+	}
 
 	if *httpFlag != "" {
 		webMain()
