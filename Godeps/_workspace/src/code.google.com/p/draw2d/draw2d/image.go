@@ -4,8 +4,8 @@
 package draw2d
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
 	"errors"
 	"image"
 	"image/color"

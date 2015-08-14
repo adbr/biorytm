@@ -5,8 +5,8 @@
 package plotter
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"math"
 )
 

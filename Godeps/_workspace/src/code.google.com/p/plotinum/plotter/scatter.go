@@ -5,7 +5,7 @@
 package plotter
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
 )
 
 // Scatter implements the Plotter interface, drawing

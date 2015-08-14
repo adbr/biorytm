@@ -1,7 +1,7 @@
 package curve
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d/raster"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d/raster"
 	"bufio"
 	"fmt"
 	"image"

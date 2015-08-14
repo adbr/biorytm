@@ -7,8 +7,8 @@
 package vgsvg
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
-	svgo "biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	svgo "github.com/adbr/biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"bufio"
 	"bytes"
 	"fmt"

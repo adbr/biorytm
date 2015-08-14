@@ -1,7 +1,7 @@
 package plotter
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"testing"
 )
 

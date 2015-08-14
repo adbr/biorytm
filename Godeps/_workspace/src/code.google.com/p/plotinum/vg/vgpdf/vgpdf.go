@@ -7,8 +7,8 @@
 package vgpdf
 
 import (
-	"biorytm/Godeps/_workspace/src/bitbucket.org/zombiezen/gopdf/pdf"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/bitbucket.org/zombiezen/gopdf/pdf"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"bufio"
 	"fmt"
 	"image/color"

@@ -13,8 +13,8 @@ import (
 	"image"
 	"image/draw"
 
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
 )
 
 // These constants determine the size of the glyph cache. The cache is keyed

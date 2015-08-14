@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"biorytm/cycle"
+	"github.com/adbr/biorytm/cycle"
 )
 
 // Oznaczenia wyróżnionych dni na wydruku tekstowym.

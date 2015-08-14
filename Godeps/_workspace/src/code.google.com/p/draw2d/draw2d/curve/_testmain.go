@@ -1,6 +1,6 @@
 package main
 
-import "biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d/curve"
+import "github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/draw2d/draw2d/curve"
 import "testing"
 import __os__ "os"
 import __regexp__ "regexp"

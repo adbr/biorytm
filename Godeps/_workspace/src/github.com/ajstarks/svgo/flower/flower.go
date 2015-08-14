@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 )
 
 var (

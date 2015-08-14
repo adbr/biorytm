@@ -7,8 +7,8 @@ package plotter
 import (
 	"image/color"
 
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 )
 
 // Line implements the Plotter interface, drawing a line.

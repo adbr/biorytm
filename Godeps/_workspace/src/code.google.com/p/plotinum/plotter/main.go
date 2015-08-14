@@ -8,9 +8,9 @@
 package main
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plotter"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plotter"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
 	"fmt"
 	"image/color"
 	"math"

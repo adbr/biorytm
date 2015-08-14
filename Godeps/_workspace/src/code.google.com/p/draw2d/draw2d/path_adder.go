@@ -4,7 +4,7 @@
 package draw2d
 
 import (
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/raster"
 )
 
 type VertexAdder struct {

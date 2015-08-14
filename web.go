@@ -16,12 +16,12 @@ import (
 	"strconv"
 	"time"
 
-	"biorytm/cycle"
+	"github.com/adbr/biorytm/cycle"
 
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plotter"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plot"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/plotter"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
 )
 
 // opts zawiera sparsowane wartości flag programu.

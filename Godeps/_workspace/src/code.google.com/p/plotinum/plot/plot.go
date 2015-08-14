@@ -24,11 +24,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgeps"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgpdf"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgsvg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgeps"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgimg"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgpdf"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/plotinum/vg/vgsvg"
 )
 
 var (

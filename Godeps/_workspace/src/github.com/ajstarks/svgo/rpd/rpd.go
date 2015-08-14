@@ -2,7 +2,7 @@ package main
 
 // Imports
 import (
-	"biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/github.com/ajstarks/svgo"
 	"encoding/xml"
 	"flag"
 	"fmt"

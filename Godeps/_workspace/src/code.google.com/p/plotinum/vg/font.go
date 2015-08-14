@@ -18,8 +18,8 @@ import (
 	"path/filepath"
 	"sync"
 
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype"
-	"biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype"
+	"github.com/adbr/biorytm/Godeps/_workspace/src/code.google.com/p/freetype-go/freetype/truetype"
 )
 
 const (
